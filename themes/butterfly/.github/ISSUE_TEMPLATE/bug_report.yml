@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        重要：請依照該模板來提交 
+        重要：請依照該模板來提交
         Important: Please follow the template to create a new issue
 
   - type: input
@@ -46,7 +46,7 @@ body:
       label: 使用的系統？ | What operating system are you using?
       options:
         - Windows
-        - macOS 
+        - macOS
         - Linux
         - Android
         - iOS
@@ -78,6 +78,6 @@ body:
     attributes:
       label: 出現問題的網站 | Website with the issue
       description: 請提供可復現問題的網站地址 | Please provide a website URL where the problem can be reproduced.
-      placeholder: 請填寫具體的網址，不要填寫 localhost 網站 | Please provide a specific URL, do not use localhost. 
+      placeholder: 請填寫具體的網址，不要填寫 localhost 網站 | Please provide a specific URL, do not use localhost.
     validations:
       required: true

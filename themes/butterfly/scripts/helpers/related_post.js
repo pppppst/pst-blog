@@ -23,6 +23,7 @@ hexo.extend.helper.register('related_posts', function (currentPost) {
       if (relatedPosts.has(post.path)) {
         relatedPosts.get(post.path).weight += 1
       } else {
+        const getPostDesc = post.postDesc || postDesc(post, hexo)
         relatedPosts.set(post.path, {
           title: post.title,
           path: post.path,
@@ -31,7 +32,7 @@ hexo.extend.helper.register('related_posts', function (currentPost) {
           weight: 1,
           updated: post.updated,
           created: post.date,
-          post,
+          postDesc: getPostDesc,
           random: Math.random()
         })
       }
@@ -60,15 +61,12 @@ hexo.extend.helper.register('related_posts', function (currentPost) {
   result += `<div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>${headlineLang}</span></div>`
   result += '<div class="relatedPosts-list">'
 
-  const max = Math.min(relatedPostsList.length, limitNum)
-  for (let i = 0; i < max; i++) {
-    const item = relatedPostsList[i]
-    let { cover, title, path, cover_type, created, updated, post } = item
+  for (let i = 0; i < Math.min(relatedPostsList.length, limitNum); i++) {
+    let { cover, title, path, cover_type, created, updated, postDesc } = relatedPostsList[i]
     const { escape_html, url_for, date } = this
     cover = cover || 'var(--default-bg-color)'
     title = escape_html(title)
-    const desc = post.postDesc || postDesc(post, hexo)
-    const className = desc ? 'pagination-related' : 'pagination-related no-desc'
+    const className = postDesc ? 'pagination-related' : 'pagination-related no-desc'
     result += `<a class="${className}" href="${url_for(path)}" title="${title}">`
     if (cover_type === 'img') {
       result += `<img class="cover" src="${url_for(cover)}" alt="cover">`
@@ -82,8 +80,8 @@ hexo.extend.helper.register('related_posts', function (currentPost) {
     }
     result += `<div class="info-item-2">${title}</div></div>`
 
-    if (desc) {
-      result += `<div class="info-2"><div class="info-item-1">${desc}</div></div>`
+    if (postDesc) {
+      result += `<div class="info-2"><div class="info-item-1">${postDesc}</div></div>`
     }
     result += '</div></a>'
   }

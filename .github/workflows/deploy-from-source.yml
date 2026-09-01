@@ -1,0 +1,87 @@
+name: Deploy Blog From Source
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+  # 由发布仓的 comment-email-notify 在收到新评论时触发,
+  # 让构建重新查询 Giscus discussions,刷新碎碎念/文章的 commentCount(评论区自动展开)。
+  repository_dispatch:
+    types: [rebuild-on-comment]
+
+jobs:
+  deploy:
+    if: github.repository == 'pppppst/pst-blog'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout source repository
+        uses: actions/checkout@v4
+        with:
+          # 需要完整历史，供下一步按 git 提交时间恢复文件 mtime
+          fetch-depth: 0
+
+      # checkout 会把所有文件 mtime 设为 checkout 时间，导致 Hexo(updated_option: mtime)
+      # 把每篇文章的 updated 都当成构建时间。scripts/atom-feed.js 的"旧文更新推送"
+      # 依赖真实的 updated，这里按每个文件最后一次提交时间恢复 mtime。
+      - name: Restore file mtimes from git history
+        shell: bash
+        run: |
+          git ls-files -z | while IFS= read -r -d '' f; do
+            t=$(git log -1 --format=%ct -- "$f")
+            [ -n "$t" ] && touch -d "@$t" "$f"
+          done
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache OG image fonts
+        uses: actions/cache@v4
+        with:
+          path: fonts
+          key: og-fonts-${{ hashFiles('_config.yml') }}
+
+      - name: Build static site
+        env:
+          GH_DISCUSSION_TOKEN: ${{ secrets.GH_DISCUSSION_TOKEN }}
+        run: pnpm run build
+
+      - name: Sync README to publish directory
+        shell: bash
+        run: |
+          if [[ -f README.md ]]; then
+            cp README.md public/README.md
+            echo "[readme-sync] Synced README.md to public/README.md"
+          else
+            echo "::warning::[readme-sync] Missing README.md in repository root"
+          fi
+
+      - name: Deploy to GitHub Pages repository
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.PAGES_DEPLOY_TOKEN }}
+          external_repository: pppppst/pppppst.github.io
+          publish_branch: main
+          publish_dir: ./public
+          # 默认 exclude_assets=.github 会丢掉 public/.github/workflows;改为空,
+          # 让 sync 脚本同步过来的 comment-email-notify / search-engine-ping 真正进发布仓激活
+          # (它们都用发布仓名称和显式启用变量守卫,只在发布仓按需运行)。
+          exclude_assets: ""
+          enable_jekyll: false
+          force_orphan: false
+          user_name: github-actions[bot]
+          user_email: github-actions[bot]@users.noreply.github.com

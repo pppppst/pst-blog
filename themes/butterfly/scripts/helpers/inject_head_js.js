@@ -11,87 +11,46 @@ hexo.extend.helper.register('inject_head_js', function () {
   const createCustomJs = () => `
     const saveToLocal = {
       set: (key, value, ttl) => {
-        const data = { value }
-
-        if (ttl != null) {
-          data.expiry = Date.now() + ttl * 86400000
-        }
-
-        localStorage.setItem(key, JSON.stringify(data))
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
       },
       get: key => {
         const itemStr = localStorage.getItem(key)
-        if (!itemStr) return
-
-        try {
-          const data = JSON.parse(itemStr)
-
-          if (data.expiry && Date.now() > data.expiry) {
-            localStorage.removeItem(key)
-            return
-          }
-
-          return data.value
-        } catch {
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
           localStorage.removeItem(key)
+          return undefined
         }
+        return value
       }
     }
 
-    const scriptCache = new Map()
-    const cssCache = new Map()
     window.btf = {
       saveToLocal,
-      getScript: (url, attr = {}) => {
-        if (scriptCache.has(url)) {
-          return scriptCache.get(url)
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
         }
-
-        const promise = new Promise((resolve, reject) => {
-          const script = document.createElement('script')
-
-          script.src = url
-          script.async = true
-
-          for (const key in attr) {
-            script.setAttribute(key, attr[key])
-          }
-
-          script.onload = resolve
-          script.onerror = reject
-
-          document.head.appendChild(script)
-        })
-
-        scriptCache.set(url, promise)
-
-        return promise
-      },
-      getCSS: (url, id) => {
-        if (cssCache.has(url)) {
-          return cssCache.get(url)
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
         }
-
-        const promise = new Promise((resolve, reject) => {
-          const link = document.createElement('link')
-
-          link.rel = 'stylesheet'
-          link.href = url
-
-          if (id) {
-            link.id = id
-          }
-
-          link.onload = resolve
-          link.onerror = reject
-
-          document.head.appendChild(link)
-        })
-
-        cssCache.set(url, promise)
-
-        return promise
-      },
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
       addGlobalFn: (key, fn, name = false, parent = window) => {
         if (!${pjax.enable} && key.startsWith('pjax')) return
         const globalFn = parent.globalFn || {}
@@ -106,17 +65,16 @@ hexo.extend.helper.register('inject_head_js', function () {
     if (!darkmode.enable) return ''
 
     let darkmodeJs = `
-      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
       const activateDarkMode = () => {
-        document.documentElement.dataset.theme = 'dark'
-        if (metaThemeColor !== null) {
-          metaThemeColor.setAttribute('content', '${themeColorDark}')
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '${themeColorDark}')
         }
       }
       const activateLightMode = () => {
-        document.documentElement.dataset.theme = 'light'
-        if (metaThemeColor !== null) {
-          metaThemeColor.setAttribute('content', '${themeColorLight}')
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '${themeColorLight}')
         }
       }
 
@@ -137,15 +95,10 @@ hexo.extend.helper.register('inject_head_js', function () {
             else if (mediaQueryDark.matches) activateDarkMode()
             else {
               const hour = new Date().getHours()
-              const start = ${start}
-              const end = ${end}
-              const isNight =
-                start < end
-                    ? hour < start || hour >= end
-                    : hour >= start || hour < end
+              const isNight = hour <= ${start} || hour >= ${end}
               isNight ? activateDarkMode() : activateLightMode()
             }
-            mediaQueryDark.addEventListener('change', e => {
+            mediaQueryDark.addEventListener('change', () => {
               if (saveToLocal.get('theme') === undefined) {
                 e.matches ? activateDarkMode() : activateLightMode()
               }
@@ -158,12 +111,7 @@ hexo.extend.helper.register('inject_head_js', function () {
       case 2:
         darkmodeJs += `
           const hour = new Date().getHours()
-          const start = ${start}
-          const end = ${end}
-          const isNight =
-            start < end
-                ? hour < start || hour >= end
-                : hour >= start || hour < end
+          const isNight = hour <= ${start} || hour >= ${end}
           if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
           else theme === 'light' ? activateLightMode() : activateDarkMode()
         `

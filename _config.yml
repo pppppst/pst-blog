@@ -3,20 +3,21 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: pst's Blog
-subtitle: '记录科研、思考与生活'
-description: '计算机、具身智能相关学习记录'
+title: "pst's Blog"
+subtitle: "记录科研、思考与生活"
+description: "计算机、具身智能相关学习记录"
 keywords:
   - ROS2
   - Embodied AI
   - Navigation
-author: ppppppst
+author: pppppst
 language: zh-CN
-timezone: 'Asia/Guangzhou'
+timezone: "Asia/Shanghai"
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
-url: http://example.com
+url: https://pppppst.github.io
+rss: /atom.xml
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
@@ -40,7 +41,7 @@ titlecase: false # Transform title into titlecase
 external_link:
   enable: true # Open external links in new tab
   field: site # Apply to the whole site
-  exclude: ''
+  exclude: ""
 filename_case: 0
 render_drafts: false
 post_asset_folder: false
@@ -50,20 +51,20 @@ syntax_highlighter: highlight.js
 highlight:
   line_number: true
   auto_detect: false
-  tab_replace: ''
+  tab_replace: ""
   wrap: true
   hljs: false
 prismjs:
   preprocess: true
   line_number: true
-  tab_replace: ''
+  tab_replace: ""
 
 # Home page setting
 # path: Root path for your blogs index page. (default = '')
 # per_page: Posts displayed per page. (0 = disable pagination)
 # order_by: Posts order. (Order by date descending by default)
 index_generator:
-  path: ''
+  path: "/blog"
   per_page: 10
   order_by: -date
 
@@ -83,7 +84,7 @@ meta_generator: true
 date_format: YYYY-MM-DD
 time_format: HH:mm:ss
 ## updated_option supports 'mtime', 'date', 'empty'
-updated_option: 'mtime'
+updated_option: "mtime"
 
 # Pagination
 ## Set per_page to 0 to disable pagination
@@ -107,3 +108,60 @@ deploy:
   type: git
   repo: git@github.com:pppppst/pppppst.github.io.git
   branch: main
+  ignore_hidden: false
+
+# RSS
+# 官方插件 hexo-generator-feed 已停用：它只遍历 posts，看不到 _data 里的碎碎念。
+# atom.xml 由 scripts/atom-feed.js 生成（文章+碎碎念混排、旧文更新推送）。
+feed:
+  enable: false
+  type: atom
+  path: atom.xml
+  limit: 20
+  hub:
+  content: true
+
+# Search Engine Indexing
+sitemap:
+  path: sitemap.xml
+
+baidusitemap:
+  path: baidusitemap.xml
+
+robotstxt:
+  useragent: "*"
+  allow:
+    - /
+  sitemap: https://pppppst.github.io/sitemap.xml
+
+# Markdown renderer with built-in KaTeX math support
+markdown_it_plus:
+  highlight: true
+  html: true
+  xhtmlOut: true
+  breaks: true
+  langPrefix:
+  linkify: true
+  typographer:
+  quotes: "“”‘’"
+  pre_class: highlight
+
+# Local Search
+search:
+  path: search.xml
+  field: post
+  content: true
+  format: html
+
+# OG Image (auto-generated social preview cards)
+og_image:
+  enable: true
+  width: 1200
+  height: 630
+  output_dir: og-images
+  font_dir: fonts
+  font_regular: LXGWWenKai-Regular.ttf
+  font_bold: LXGWWenKai-Bold.ttf
+  font_regular_url: https://raw.githubusercontent.com/lxgw/LxgwWenKai/50f4b182415a8c33d9a456df220b66a284e2509b/fonts/TTF/LXGWWenKai-Regular.ttf
+  font_bold_url: https://raw.githubusercontent.com/lxgw/LxgwWenKai/50f4b182415a8c33d9a456df220b66a284e2509b/fonts/TTF/LXGWWenKai-Bold.ttf
+  site_name: "pst's Blog"

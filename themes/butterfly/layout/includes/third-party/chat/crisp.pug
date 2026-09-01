@@ -21,8 +21,7 @@ script.
 
         window.chatBtnFn = () => $crisp.is("chat:visible") ? close() : open()
 
-        const chatBtn = document.getElementById('chat-btn')
-        if (chatBtn) chatBtn.style.display = 'block'
+        document.getElementById('chat-btn').style.display = 'block'
       } else if (isChatHideShow) {
         window.chatBtn = {
           hide: () => $crisp.push(["do", "chat:hide"]),

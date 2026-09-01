@@ -53,7 +53,7 @@ script.
         : window.loadOtherComment = loadUtterances
       return
     }
-    
+
     if ('!{use[0]}' === 'Utterances' || !!{lazyload}) {
       if (!{lazyload}) btf.loadComment(document.getElementById('utterances-wrap'), loadUtterances)
       else loadUtterances()
