@@ -256,6 +256,14 @@ test('post detail pages use one fixed home image without gradient page chrome', 
   assert.match(post, /#body-wrap\.post #footer::before[^\{]*\{[^}]*background:\s*transparent\s*!important/)
 })
 
+test('post detail title and metadata render in black over the home image', () => {
+  const post = readPublic(firstGeneratedPostRoute())
+  assert.match(
+    post,
+    /#body-wrap\.post #page-header\.post-bg #post-info,\s*#body-wrap\.post #page-header\.post-bg #post-info \*\s*\{[^}]*color:\s*#000000\s*!important/
+  )
+})
+
 test('only selected section pages use the fixed full-page home background', () => {
   const backgroundPages = new Map([
     ['archives/index.html', 'type-archive'],
