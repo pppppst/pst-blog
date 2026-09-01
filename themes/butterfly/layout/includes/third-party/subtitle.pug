@@ -1,4 +1,5 @@
-- const { effect, source, sub, typed_option } = theme.subtitle
+- const { effect, landing_effect, source, sub, typed_option } = theme.subtitle
+- const typewriterEffect = page.type === 'landing' ? landing_effect : effect
 - let subContent = sub || new Array()
 
 script.
@@ -13,7 +14,7 @@ script.
       }, !{JSON.stringify(typed_option)}))
     },
     run: subtitleType => {
-      if (!{effect}) {
+      if (!{typewriterEffect}) {
         if (typeof Typed === 'function') {
           subtitleType()
         } else {
@@ -24,7 +25,7 @@ script.
       }
     },
     processSubtitle: (content, extraContents = []) => {
-      if (!{effect}) {
+      if (!{typewriterEffect}) {
         const sub = !{JSON.stringify(subContent)}.slice()
 
         if (extraContents.length > 0) {
@@ -40,11 +41,14 @@ script.
         sub.length > 0 && typedJSFn.init(sub)
       } else {
         document.getElementById('subtitle').textContent = typeof content === 'string' ? content :
-          (Array.isArray(content) && content.length > 0 ? content[0] : '')
+          (Array.isArray(content) && content.length > 0 ? content[0] :
+            (!{JSON.stringify(subContent)}[0] || ''))
       }
     }
   }
-  btf.addGlobalFn('pjaxSendOnce', () => { typed.destroy() }, 'typedDestroy')
+  btf.addGlobalFn('pjaxSendOnce', () => {
+    if (window.typed && typeof window.typed.destroy === 'function') window.typed.destroy()
+  }, 'typedDestroy')
 
 case source
   when 1
@@ -108,6 +112,6 @@ case source
     if subContent.length > 0
       script.
         function subtitleType () {
-          typedJSFn.processSubtitle(!{JSON.stringify(subContent)})
+          typedJSFn.processSubtitle()
         }
         typedJSFn.run(subtitleType)

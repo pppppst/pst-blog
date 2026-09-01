@@ -72,6 +72,7 @@ module.exports = {
   subtitle: {
     enable: false,
     effect: true,
+    landing_effect: false,
     typed_option: null,
     source: false,
     sub: null

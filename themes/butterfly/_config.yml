@@ -66,16 +66,16 @@ avatar:
 disable_top_img: false
 
 # If the banner of page not setting, it will show the default_top_img
-default_top_img: /img/home-img.png
+default_top_img: /img/home-img.webp
 
 # The banner image of index page
-index_img: /img/home-img.png
+index_img: /img/home-img.webp
 
 # The banner image of archive page
-archive_img: /img/home-img.png
+archive_img: /img/home-img.webp
 
 # Note: tag page, not tags page
-tag_img: /img/home-img.png
+tag_img: /img/home-img.webp
 
 # The banner image of tag page, you can set the banner image for each tag
 # Format:
@@ -83,7 +83,7 @@ tag_img: /img/home-img.png
 tag_per_img:
 
 # Note: category page, not categories page
-category_img: /img/home-img.png
+category_img: /img/home-img.webp
 
 # The banner image of category page, you can set the banner image for each category
 # Format:
@@ -155,9 +155,13 @@ subtitle:
   enable: true
   # Typewriter Effect
   effect: false
+  # Enable the typewriter only on the root landing page
+  landing_effect: true
   # Customize typed.js
   # https://github.com/mattboldt/typed.js/#customization
   typed_option:
+    loop: false
+    showCursor: false
   # Source - Call the third-party service API (Chinese only)
   # It will show the source first, then show the content of sub
   # Choose: false/1/2/3
@@ -1052,7 +1056,7 @@ inject:
         #page-header.full_page {
           background-image:
             linear-gradient(rgba(20, 30, 50, 0.25), rgba(20, 30, 50, 0.25)),
-            url('/img/home-img.png') !important;
+            url('/img/home-img.webp') !important;
           background-size: cover;
           background-position: center;
         }
@@ -1075,7 +1079,7 @@ inject:
         #page-header.not-home-page {
           background-image:
             linear-gradient(rgba(20, 30, 50, 0.25), rgba(20, 30, 50, 0.25)),
-            url('/img/home-img.png') !important;
+            url('/img/home-img.webp') !important;
           background-size: cover;
           background-position: center;
         }
@@ -1102,6 +1106,7 @@ inject:
         }
 
         #body-wrap.type-home,
+        #body-wrap.post,
         #body-wrap.type-archive,
         #body-wrap.type-categories,
         #body-wrap.type-tags,
@@ -1110,7 +1115,7 @@ inject:
           min-height: 100vh;
           background-image:
             linear-gradient(rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.18)),
-            url('/img/home-img.png');
+            url('/img/home-img.webp');
           background-attachment: fixed;
           background-position: center;
           background-repeat: no-repeat;
@@ -1119,6 +1124,11 @@ inject:
 
         #body-wrap.type-home #page-header.full_page,
         #body-wrap.type-home #page-header.full_page:before {
+          background: transparent !important;
+        }
+
+        #body-wrap.post #page-header.post-bg,
+        #body-wrap.post #page-header.post-bg:before {
           background: transparent !important;
         }
 
@@ -1195,7 +1205,7 @@ inject:
         [data-theme='dark'] #page-header.not-home-page {
           background-image:
             linear-gradient(rgba(6, 12, 24, 0.5), rgba(6, 12, 24, 0.5)),
-            url('/img/home-img.png') !important;
+            url('/img/home-img.webp') !important;
         }
 
         [data-theme='dark'] #page-header.not-top-img {
@@ -1220,6 +1230,7 @@ inject:
         }
 
         [data-theme='dark'] #body-wrap.type-home,
+        [data-theme='dark'] #body-wrap.post,
         [data-theme='dark'] #body-wrap.type-archive,
         [data-theme='dark'] #body-wrap.type-categories,
         [data-theme='dark'] #body-wrap.type-tags,
@@ -1227,7 +1238,7 @@ inject:
         [data-theme='dark'] #body-wrap.type-shuoshuo {
           background-image:
             linear-gradient(rgba(6, 12, 24, 0.45), rgba(6, 12, 24, 0.45)),
-            url('/img/home-img.png');
+            url('/img/home-img.webp');
         }
 
         [data-theme='dark'] #page-header.full_page #site-title,
@@ -1318,6 +1329,7 @@ inject:
         }
 
         #body-wrap.type-home #page-header.nav-fixed #nav,
+        #body-wrap.post #page-header.nav-fixed #nav,
         #body-wrap.type-archive #page-header.nav-fixed #nav,
         #body-wrap.type-categories #page-header.nav-fixed #nav,
         #body-wrap.type-tags #page-header.nav-fixed #nav,
@@ -1330,12 +1342,14 @@ inject:
         }
 
         #body-wrap.type-home #footer,
+        #body-wrap.post #footer,
         #body-wrap.type-archive #footer,
         #body-wrap.type-categories #footer,
         #body-wrap.type-tags #footer,
         #body-wrap.type-link #footer,
         #body-wrap.type-shuoshuo #footer,
         #body-wrap.type-home #footer::before,
+        #body-wrap.post #footer::before,
         #body-wrap.type-archive #footer::before,
         #body-wrap.type-categories #footer::before,
         #body-wrap.type-tags #footer::before,
@@ -1368,6 +1382,15 @@ inject:
         #body-wrap.type-home #page-header.full_page #site-title,
         #body-wrap.type-home #page-header.full_page #site-subtitle,
         #body-wrap.type-home #page-header.full_page #subtitle {
+          color: #000000 !important;
+          text-shadow: 0 1px 10px rgba(255, 255, 255, 0.55);
+        }
+
+        #body-wrap.type-archive #page-header.not-home-page #site-title,
+        #body-wrap.type-categories #page-header.not-home-page #site-title,
+        #body-wrap.type-tags #page-header.not-home-page #site-title,
+        #body-wrap.type-link #page-header.not-home-page #site-title,
+        #body-wrap.type-shuoshuo #page-header.not-home-page #site-title {
           color: #000000 !important;
           text-shadow: 0 1px 10px rgba(255, 255, 255, 0.55);
         }

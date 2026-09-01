@@ -11,6 +11,17 @@ function readPublic(relativePath) {
   return fs.readFileSync(path.join(publicDir, relativePath), 'utf8')
 }
 
+function generatedPostRoutes() {
+  return fs.readdirSync(publicDir, { recursive: true })
+    .filter(file => /^\d{4}[\\/]\d{2}[\\/]\d{2}[\\/][^\\/]+[\\/]index\.html$/.test(file))
+}
+
+function firstGeneratedPostRoute() {
+  const [post] = generatedPostRoutes()
+  assert.ok(post, 'missing generated posts')
+  return post
+}
+
 test('build exposes the approved top-level routes', () => {
   for (const route of [
     'index.html',
@@ -31,10 +42,25 @@ test('build emits search, feed, and crawler artifacts', () => {
   }
 })
 
+test('build serves an optimized WebP home background instead of the PNG', () => {
+  const imagePath = path.join(publicDir, 'img', 'home-img.webp')
+  assert.equal(fs.existsSync(imagePath), true, 'missing optimized home-img.webp')
+
+  const image = fs.readFileSync(imagePath)
+  assert.equal(image.subarray(0, 4).toString('ascii'), 'RIFF')
+  assert.equal(image.subarray(8, 12).toString('ascii'), 'WEBP')
+  assert.ok(image.length < 600 * 1024, `home-img.webp exceeds 600 KiB: ${image.length} bytes`)
+
+  for (const route of ['index.html', 'blog/index.html', 'archives/index.html', 'categories/index.html']) {
+    const html = readPublic(route)
+    assert.match(html, /\/img\/home-img\.webp/, route)
+    assert.doesNotMatch(html, /\/img\/home-img\.png/, route)
+  }
+})
+
 test('every generated post references an existing 1200 by 630 Open Graph image', () => {
   const ogDir = path.join(publicDir, 'og-images')
-  const posts = fs.readdirSync(publicDir, { recursive: true })
-    .filter(file => /^\d{4}[\\/]\d{2}[\\/]\d{2}[\\/][^\\/]+[\\/]index\.html$/.test(file))
+  const posts = generatedPostRoutes()
   assert.ok(posts.length > 0, 'missing generated posts')
 
   for (const post of posts) {
@@ -63,18 +89,18 @@ test('author card renders a visible dark GitHub social icon', () => {
   )
 })
 
-test('home subtitle is static and does not load the typewriter animation', () => {
+test('root landing types its subtitle once and leaves the completed text visible', () => {
   const home = readPublic('index.html')
-  const subtitle = { textContent: '' }
-  const requestedScripts = []
+  const typedCalls = []
   const context = {
-    document: { getElementById: () => subtitle },
+    document: { getElementById: () => ({ textContent: '' }) },
+    Typed: function (selector, options) {
+      typedCalls.push({ selector, options })
+      return { destroy() {} }
+    },
     btf: {
       addGlobalFn() {},
-      getScript(url) {
-        requestedScripts.push(url)
-        return { then() {} }
-      }
+      getScript() { throw new Error('Typed.js should already be available in this test') }
     }
   }
   context.window = context
@@ -85,8 +111,32 @@ test('home subtitle is static and does not load the typewriter animation', () =>
   assert.equal(subtitleScripts.length, 2, 'missing generated subtitle scripts')
   vm.runInNewContext(subtitleScripts.join('\n'), context)
 
-  assert.ok(subtitle.textContent.trim(), 'missing static home subtitle')
-  assert.deepEqual(requestedScripts, [])
+  assert.equal(typedCalls.length, 1)
+  assert.equal(typedCalls[0].selector, '#subtitle')
+  assert.deepEqual(Array.from(typedCalls[0].options.strings), ['风物长宜放眼量'])
+  assert.equal(typedCalls[0].options.loop, false)
+  assert.equal(typedCalls[0].options.showCursor, false)
+})
+
+test('blog subtitle stays static without starting Typed.js', () => {
+  const blog = readPublic('blog/index.html')
+  const subtitle = { textContent: '' }
+  let typedCalls = 0
+  const context = {
+    document: { getElementById: () => subtitle },
+    Typed: function () { typedCalls += 1 },
+    btf: { addGlobalFn() {}, getScript() { throw new Error('blog must not request Typed.js') } }
+  }
+  context.window = context
+
+  const subtitleScripts = [...blog.matchAll(/<script>([\s\S]*?)<\/script>/g)]
+    .map(match => match[1])
+    .filter(script => script.includes('window.typedJSFn') || script.includes('function subtitleType'))
+  assert.equal(subtitleScripts.length, 2, 'missing generated blog subtitle scripts')
+  vm.runInNewContext(subtitleScripts.join('\n'), context)
+
+  assert.equal(subtitle.textContent, '风物长宜放眼量')
+  assert.equal(typedCalls, 0)
 })
 
 test('root landing hides the hero title while keeping its subtitle and navigation title', () => {
@@ -104,7 +154,7 @@ test('home and blog use one fixed home image without gradient page chrome', () =
   for (const route of ['index.html', 'blog/index.html']) {
     const html = readPublic(route)
     assert.match(html, /<div class="[^\"]*type-home[^\"]*" id="body-wrap">/, route)
-    assert.match(html, /\.type-home[^\{]*\{[^}]*url\(['"]?\/img\/home-img\.png/, route)
+    assert.match(html, /\.type-home[^\{]*\{[^}]*url\(['"]?\/img\/home-img\.webp/, route)
     assert.match(html, /\.type-home[^\{]*\{[^}]*background-attachment:\s*fixed/, route)
     assert.match(html, /\.type-home[^\{]*\{[^}]*background-size:\s*cover/, route)
     assert.match(
@@ -143,7 +193,7 @@ test('every page renders the site navigation in black with the capitalized site 
     'tags/index.html',
     'link/index.html',
     'memos/index.html',
-    '2026/08/31/blog-ready/index.html'
+    firstGeneratedPostRoute()
   ]
 
   for (const route of routes) {
@@ -170,7 +220,7 @@ test('home-layout hero titles and subtitles render in black', () => {
   assert.match(blog, /<h1 id="site-title">Pst's Blog<\/h1>/)
 })
 
-test('section pages share the home banner while post pages keep their own background', () => {
+test('section pages share the home banner', () => {
   const sectionRoutes = [
     'categories/index.html',
     'tags/index.html',
@@ -183,18 +233,27 @@ test('section pages share the home banner while post pages keep their own backgr
     const html = readPublic(route)
     assert.match(
       html,
-      /<header class="not-home-page fixed" id="page-header" style="background-image: url\(\/img\/home-img\.png\);">/,
+      /<header class="not-home-page fixed" id="page-header" style="background-image: url\(\/img\/home-img\.webp\);">/,
       route
     )
   }
 
   const sectionPage = readPublic('categories/index.html')
-  assert.match(sectionPage, /#page-header\.not-home-page\s*\{[^}]*url\('\/img\/home-img\.png'\)[^}]*\}/)
-  assert.match(sectionPage, /\[data-theme='dark'\] #page-header\.not-home-page\s*\{[^}]*url\('\/img\/home-img\.png'\)[^}]*\}/)
+  assert.match(sectionPage, /#page-header\.not-home-page\s*\{[^}]*url\('\/img\/home-img\.webp'\)[^}]*\}/)
+  assert.match(sectionPage, /\[data-theme='dark'\] #page-header\.not-home-page\s*\{[^}]*url\('\/img\/home-img\.webp'\)[^}]*\}/)
+})
 
-  const post = readPublic('2026/08/31/blog-ready/index.html')
-  assert.doesNotMatch(post, /#page-header\.post-bg\s*\{[^}]*home-img\.png[^}]*\}/)
-  assert.doesNotMatch(post, /\[data-theme='dark'\] #page-header\.post-bg\s*\{[^}]*home-img\.png[^}]*\}/)
+test('post detail pages use one fixed home image without gradient page chrome', () => {
+  const post = readPublic(firstGeneratedPostRoute())
+  assert.match(post, /<div class="post" id="body-wrap">/)
+  assert.match(post, /#body-wrap\.post[^\{]*\{[^}]*url\(['"]?\/img\/home-img\.webp/)
+  assert.match(post, /#body-wrap\.post[^\{]*\{[^}]*background-attachment:\s*fixed/)
+  assert.match(post, /#body-wrap\.post[^\{]*\{[^}]*background-size:\s*cover/)
+  assert.match(post, /#body-wrap\.post #page-header\.post-bg[^\{]*\{[^}]*background:\s*transparent\s*!important/)
+  assert.match(post, /#body-wrap\.post #page-header\.post-bg:before[^\{]*\{[^}]*background:\s*transparent\s*!important/)
+  assert.match(post, /#body-wrap\.post #page-header\.nav-fixed #nav[^\{]*\{[^}]*background:\s*transparent\s*!important/)
+  assert.match(post, /#body-wrap\.post #footer[^\{]*\{[^}]*background:\s*transparent\s*!important/)
+  assert.match(post, /#body-wrap\.post #footer::before[^\{]*\{[^}]*background:\s*transparent\s*!important/)
 })
 
 test('only selected section pages use the fixed full-page home background', () => {
@@ -209,7 +268,7 @@ test('only selected section pages use the fixed full-page home background', () =
   for (const [route, pageClass] of backgroundPages) {
     const html = readPublic(route)
     assert.match(html, new RegExp(`<div class="[^"]*${pageClass}[^"]*" id="body-wrap">`), route)
-    assert.match(html, new RegExp(`\\.${pageClass}[^{]*\\{[^}]*url\\(['"]?\\/img\\/home-img\\.png`), route)
+    assert.match(html, new RegExp(`\\.${pageClass}[^{]*\\{[^}]*url\\(['"]?\\/img\\/home-img\\.webp`), route)
     assert.match(html, new RegExp(`\\.${pageClass}[^{]*\\{[^}]*background-attachment:\\s*fixed`), route)
     assert.match(html, new RegExp(`\\.${pageClass}[^{]*\\{[^}]*background-size:\\s*cover`), route)
     assert.match(
@@ -232,13 +291,18 @@ test('only selected section pages use the fixed full-page home background', () =
       new RegExp(`\\.${pageClass} #footer::before[^{]*\\{[^}]*background:\\s*transparent\\s*!important`),
       route
     )
+    assert.match(
+      html,
+      new RegExp(`\\.${pageClass} #page-header\\.not-home-page #site-title[^{]*\\{[^}]*color:\\s*#000000\\s*!important`),
+      route
+    )
   }
 
   const unchangedPages = [
     'index.html',
     'blog/index.html',
     'about/index.html',
-    '2026/08/31/blog-ready/index.html'
+    firstGeneratedPostRoute()
   ]
   for (const route of unchangedPages) {
     assert.doesNotMatch(
