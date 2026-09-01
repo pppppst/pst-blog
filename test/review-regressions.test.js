@@ -24,9 +24,17 @@ test('pnpm build policy and CI use one exact package manager version', () => {
 
 test('deployment validates the build and prevents stale concurrent publishes', () => {
   const workflow = read('.github/workflows/deploy-from-source.yml')
-  assert.match(workflow, /concurrency:/)
+  assert.match(workflow, /concurrency:\s+group: deploy-blog-production\s+cancel-in-progress: true/)
   assert.match(workflow, /pnpm test/)
   assert.match(workflow, /pnpm run verify/)
+})
+
+test('repository dispatch token uses the permission required by the called endpoint', () => {
+  const readme = read('README.md')
+  const workflow = read('.github/workflows/comment-email-notify.yml')
+  assert.match(readme, /SOURCE_DEPLOY_PAT[^\n]*Contents: Read and write/)
+  assert.match(workflow, /Contents:write/)
+  assert.doesNotMatch(workflow, /Actions:write/)
 })
 
 test('SMTP validation passes secrets through environment variables', () => {
@@ -42,4 +50,13 @@ test('sitemap contains canonical blog and archive routes exactly once', () => {
     assert.equal(sitemap.split(`<loc>${url}</loc>`).length - 1, 1, url)
   }
   assert.doesNotMatch(sitemap, /<loc>https:\/\/pppppst\.github\.io\/index\.html<\/loc>/)
+})
+
+test('representative HTML pages use pretty canonical URLs', () => {
+  for (const route of ['index.html', 'blog/index.html', 'archives/index.html']) {
+    const html = fs.readFileSync(path.join(root, 'public', route), 'utf8')
+    const canonical = html.match(/<link rel="canonical" href="([^"]+)"/)?.[1]
+    assert.ok(canonical, `missing canonical tag in ${route}`)
+    assert.doesNotMatch(canonical, /index\.html$/)
+  }
 })

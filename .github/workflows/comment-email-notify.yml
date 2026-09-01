@@ -64,8 +64,7 @@ jobs:
   trigger-rebuild:
     # 收到新评论/新讨论时,触发源仓重新构建,刷新 memos 等页的 commentCount,
     # 让对应碎碎念/文章的评论区自动展开。需要发布仓 secret SOURCE_DEPLOY_PAT
-    # (对源仓 pppppst/pst-blog 有 Actions:write 的 classic PAT,
-    #  或 fine-grained PAT 授予 Actions 读写权限)。
+    # (classic PAT 需要 repo scope；fine-grained PAT 对源仓授予 Contents:write)。
     # 未配置则仅告警跳过,不影响邮件发送,评论区将在下次推送时刷新。
     runs-on: ubuntu-latest
     if: github.repository == 'pppppst/pppppst.github.io' && vars.ENABLE_COMMENT_REBUILD == 'true'
@@ -84,5 +83,4 @@ jobs:
           gh api repos/pppppst/pst-blog/dispatches \
             -f event_type=rebuild-on-comment \
             -F "client_payload[source]=comment-notify" \
-            -F "client_payload[event]=${{ github.event_name }}" \
-            || echo "::warning::触发源仓重建失败,请检查 SOURCE_DEPLOY_PAT 权限"
+            -F "client_payload[event]=${{ github.event_name }}"

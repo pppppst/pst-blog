@@ -51,7 +51,7 @@ pnpm run verify
 
 发布仓 `pppppst/pppppst.github.io` 需要：
 
-- Secrets：`SOURCE_DEPLOY_PAT`（源码仓 **Actions: Read and write**）、`SMTP_SERVER`、`SMTP_PORT`、
+- Secrets：`SOURCE_DEPLOY_PAT`（细粒度 PAT：源码仓 **Contents: Read and write**；classic PAT：`repo` scope）、`SMTP_SERVER`、`SMTP_PORT`、
   `SMTP_USERNAME`、`SMTP_PASSWORD`、`MAIL_FROM`、`MAIL_TO`、`BAIDU_SITE`、`BAIDU_TOKEN`
 - Variables：`ENABLE_COMMENT_EMAIL`、`ENABLE_COMMENT_REBUILD`、`ENABLE_SEARCH_PING`、`ENABLE_PAGES_RETRY`
 

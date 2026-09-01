@@ -12,7 +12,7 @@ on:
     types: [rebuild-on-comment]
 
 concurrency:
-  group: deploy-blog-${{ github.ref }}
+  group: deploy-blog-production
   cancel-in-progress: true
 
 jobs:

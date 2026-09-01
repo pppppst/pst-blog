@@ -30,17 +30,22 @@ test('build emits search, feed, and crawler artifacts', () => {
   }
 })
 
-test('build generates a 1200 by 630 Open Graph image for a post', () => {
+test('every generated post references an existing 1200 by 630 Open Graph image', () => {
   const ogDir = path.join(publicDir, 'og-images')
-  const images = fs.existsSync(ogDir)
-    ? fs.readdirSync(ogDir).filter(file => file.endsWith('.png'))
-    : []
-  assert.ok(images.length > 0, 'missing generated OG image')
+  const posts = fs.readdirSync(publicDir, { recursive: true })
+    .filter(file => /^\d{4}[\\/]\d{2}[\\/]\d{2}[\\/].+[\\/]index\.html$/.test(file))
+  assert.ok(posts.length > 0, 'missing generated posts')
 
-  const png = fs.readFileSync(path.join(ogDir, images[0]))
-  assert.ok(png.length >= 24, 'generated OG image is empty or truncated')
-  assert.equal(png.readUInt32BE(16), 1200)
-  assert.equal(png.readUInt32BE(20), 630)
+  for (const post of posts) {
+    const html = readPublic(post)
+    const ogUrl = html.match(/<meta property="og:image" content="([^"]+)"/)?.[1]
+    assert.ok(ogUrl, `missing og:image in ${post}`)
+    const imageName = decodeURIComponent(new URL(ogUrl).pathname.split('/').pop())
+    const png = fs.readFileSync(path.join(ogDir, imageName))
+    assert.ok(png.length >= 24, `generated OG image is empty or truncated: ${imageName}`)
+    assert.equal(png.readUInt32BE(16), 1200)
+    assert.equal(png.readUInt32BE(20), 630)
+  }
 })
 
 test('home page belongs to pst and does not expose reference identity', () => {
