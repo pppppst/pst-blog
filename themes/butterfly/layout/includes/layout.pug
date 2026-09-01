@@ -5,6 +5,8 @@
 - var hideAside = !theme.aside.enable || page.aside === false ? 'hide-aside' : ''
 - var pageType = globalPageType === 'post' ? 'post' : 'page'
 - pageType = page.type ? pageType + ' type-' + page.type : pageType
+- if (globalPageType === 'home') pageType += ' type-home'
+- if (globalPageType === 'archive') pageType += ' type-archive'
 
 doctype html
 html(lang=config.language data-theme=theme.display_mode class=htmlClassHideAside)
