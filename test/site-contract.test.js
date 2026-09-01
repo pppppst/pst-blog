@@ -55,6 +55,14 @@ test('home page belongs to pst and does not expose reference identity', () => {
   assert.doesNotMatch(home, /SpeechlessPanda|859635282@qq\.com/i)
 })
 
+test('author card renders a visible dark GitHub social icon', () => {
+  const home = readPublic('index.html')
+  assert.match(
+    home,
+    /<div class="card-info-social-icons"><a class="social-icon" href="https:\/\/github\.com\/pppppst"[^>]*title="GitHub"><i class="fab fa-github" style="color: #24292f;"><\/i><\/a>/
+  )
+})
+
 test('home subtitle is static and does not load the typewriter animation', () => {
   const home = readPublic('index.html')
   const subtitle = { textContent: '' }

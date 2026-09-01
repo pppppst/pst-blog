@@ -49,7 +49,7 @@ code_blocks:
 # Formal:
 #   icon: link || the description || color
 social:
-  fab fa-github: https://github.com/pppppst || GitHub || '#ffffff'
+  fab fa-github: https://github.com/pppppst || GitHub || '#24292f'
   fas fa-rss: /atom.xml || RSS || '#ff6600'
 
 # --------------------------------------
