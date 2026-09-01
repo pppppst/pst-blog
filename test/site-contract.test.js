@@ -33,7 +33,7 @@ test('build emits search, feed, and crawler artifacts', () => {
 test('every generated post references an existing 1200 by 630 Open Graph image', () => {
   const ogDir = path.join(publicDir, 'og-images')
   const posts = fs.readdirSync(publicDir, { recursive: true })
-    .filter(file => /^\d{4}[\\/]\d{2}[\\/]\d{2}[\\/].+[\\/]index\.html$/.test(file))
+    .filter(file => /^\d{4}[\\/]\d{2}[\\/]\d{2}[\\/][^\\/]+[\\/]index\.html$/.test(file))
   assert.ok(posts.length > 0, 'missing generated posts')
 
   for (const post of posts) {
