@@ -4,6 +4,8 @@
 // 直接在 after_generate 改 memos/index.html 的 shuoshuo-data JSON,避免 data 重新加载覆盖。
 'use strict'
 
+const { discussionCommentCount } = require('../lib/giscus-count')
+
 const GISCUS_QUERY = `query($owner:String!,$name:String!,$categoryId:ID,$after:String){
   repository(owner:$owner,name:$name){
     discussions(first:100,after:$after,categoryId:$categoryId,orderBy:{field:UPDATED_AT,direction:DESC}){
@@ -72,7 +74,7 @@ hexo.extend.filter.register('after_generate', async function () {
           const json = await res.json()
           const discussions = json && json.data && json.data.repository && json.data.repository.discussions
           const nodes = (discussions && discussions.nodes) || []
-          nodes.forEach(n => { titleToCount[n.title] = n.comments.totalCount })
+          nodes.forEach(n => { titleToCount[n.title] = discussionCommentCount(n) })
           hexo.log.info(`[memo-comment-count] 查到 ${nodes.length} 条 discussion`)
           hasNextPage = !!(discussions && discussions.pageInfo && discussions.pageInfo.hasNextPage)
           after = discussions && discussions.pageInfo && discussions.pageInfo.endCursor

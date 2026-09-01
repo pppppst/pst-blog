@@ -11,6 +11,10 @@ on:
   repository_dispatch:
     types: [rebuild-on-comment]
 
+concurrency:
+  group: deploy-blog-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   deploy:
     if: github.repository == 'pppppst/pst-blog'
@@ -20,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout source repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           # 需要完整历史，供下一步按 git 提交时间恢复文件 mtime
           fetch-depth: 0
@@ -37,20 +41,20 @@ jobs:
           done
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 20
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
         with:
-          version: 10
+          version: 10.18.3
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Cache OG image fonts
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: fonts
           key: og-fonts-${{ hashFiles('_config.yml') }}
@@ -59,6 +63,12 @@ jobs:
         env:
           GH_DISCUSSION_TOKEN: ${{ secrets.GH_DISCUSSION_TOKEN }}
         run: pnpm run build
+
+      - name: Test generated site
+        run: pnpm test
+
+      - name: Verify Atom feed
+        run: pnpm run verify
 
       - name: Sync README to publish directory
         shell: bash
@@ -71,7 +81,7 @@ jobs:
           fi
 
       - name: Deploy to GitHub Pages repository
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@329bcc8f12caed2cefe5a5b80781499a6f3b361b # v4
         with:
           personal_token: ${{ secrets.PAGES_DEPLOY_TOKEN }}
           external_repository: pppppst/pppppst.github.io

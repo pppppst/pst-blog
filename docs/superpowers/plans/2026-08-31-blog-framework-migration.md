@@ -15,7 +15,7 @@
 - Do not copy reference-authored posts, memos, about text, friend links, avatars, QR codes, email addresses, repository IDs, or Giscus IDs.
 - Preserve `pppppst`, `pst's Blog`, `https://pppppst.github.io`, existing about text, existing avatar assets, and categories.
 - Use source repository `pppppst/pst-blog` and publish repository `pppppst/pppppst.github.io`.
-- Keep Butterfly's GPL-3.0 license and credit the framework source in README.
+- Keep the vendored Butterfly 5.5.4 snapshot's Apache-2.0 license and credit the framework source in README.
 
 ---
 
@@ -78,4 +78,3 @@
 - [ ] Run `pnpm test` and `pnpm run verify`.
 - [ ] Inspect representative desktop and mobile pages and verify the generated OG image dimensions.
 - [ ] Scan tracked source and generated output for reference identity and report external GitHub setup that remains user-owned.
-

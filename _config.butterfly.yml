@@ -21,3 +21,13 @@ aside:
   # 保留分类功能与分类卡片
   card_categories:
     enable: true
+
+# Giscus 需要先在发布仓启用 Discussions 并填写 repo_id/category_id。
+# 未完成前保持关闭，避免向 giscus.app 发送无效配置。
+comments:
+  use:
+
+giscus:
+  repo: pppppst/pppppst.github.io
+  repo_id:
+  category_id:

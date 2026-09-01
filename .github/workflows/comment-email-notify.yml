@@ -6,7 +6,7 @@ name: Giscus Comment Email Notify
 # 两者字段不同(comment.* vs discussion.*),下面用 github.event_name 三元表达式分流取值。
 # 仅在发布仓 pppppst.github.io 运行(Discussions 与 SMTP secrets 都在此仓)。
 #
-# 收到评论后还会触发源仓(blog-s-code)重建,刷新 commentCount,让评论区自动展开。
+# 收到评论后还会触发源仓(pst-blog)重建,刷新 commentCount,让评论区自动展开。
 
 on:
   workflow_dispatch:
@@ -25,16 +25,23 @@ jobs:
       contents: read
     steps:
       - name: Validate required secrets
+        env:
+          SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
         run: |
-          test -n "${{ secrets.SMTP_SERVER }}" || (echo "Missing SMTP_SERVER" && exit 1)
-          test -n "${{ secrets.SMTP_PORT }}" || (echo "Missing SMTP_PORT" && exit 1)
-          test -n "${{ secrets.SMTP_USERNAME }}" || (echo "Missing SMTP_USERNAME" && exit 1)
-          test -n "${{ secrets.SMTP_PASSWORD }}" || (echo "Missing SMTP_PASSWORD" && exit 1)
-          test -n "${{ secrets.MAIL_FROM }}" || (echo "Missing MAIL_FROM" && exit 1)
-          test -n "${{ secrets.MAIL_TO }}" || (echo "Missing MAIL_TO" && exit 1)
+          test -n "$SMTP_SERVER" || (echo "Missing SMTP_SERVER" && exit 1)
+          test -n "$SMTP_PORT" || (echo "Missing SMTP_PORT" && exit 1)
+          test -n "$SMTP_USERNAME" || (echo "Missing SMTP_USERNAME" && exit 1)
+          test -n "$SMTP_PASSWORD" || (echo "Missing SMTP_PASSWORD" && exit 1)
+          test -n "$MAIL_FROM" || (echo "Missing MAIL_FROM" && exit 1)
+          test -n "$MAIL_TO" || (echo "Missing MAIL_TO" && exit 1)
 
       - name: Send comment notification email
-        uses: dawidd6/action-send-mail@v4
+        uses: dawidd6/action-send-mail@611879133a9569642c41be66f4a323286e9b8a3b # v4
         with:
           server_address: ${{ secrets.SMTP_SERVER }}
           server_port: ${{ secrets.SMTP_PORT }}
