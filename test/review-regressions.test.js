@@ -22,6 +22,14 @@ test('pnpm build policy and CI use one exact package manager version', () => {
   assert.match(workflow, /version:\s*10\.18\.3/)
 })
 
+test('OG image font URLs reference files present in the pinned LXGW commit', () => {
+  const config = read('_config.yml')
+  const pinnedCommit = '50f4b182415a8c33d9a456df220b66a284e2509b'
+  assert.match(config, new RegExp(`${pinnedCommit}/fonts/TTF/LXGWWenKai-Regular\\.ttf`))
+  assert.match(config, /font_bold:\s+LXGWWenKai-Medium\.ttf/)
+  assert.match(config, new RegExp(`${pinnedCommit}/fonts/TTF/LXGWWenKai-Medium\\.ttf`))
+})
+
 test('deployment validates the build and prevents stale concurrent publishes', () => {
   const workflow = read('.github/workflows/deploy-from-source.yml')
   assert.match(workflow, /concurrency:\s+group: deploy-blog-production\s+cancel-in-progress: true/)

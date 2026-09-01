@@ -161,7 +161,7 @@ og_image:
   output_dir: og-images
   font_dir: fonts
   font_regular: LXGWWenKai-Regular.ttf
-  font_bold: LXGWWenKai-Bold.ttf
+  font_bold: LXGWWenKai-Medium.ttf
   font_regular_url: https://raw.githubusercontent.com/lxgw/LxgwWenKai/50f4b182415a8c33d9a456df220b66a284e2509b/fonts/TTF/LXGWWenKai-Regular.ttf
-  font_bold_url: https://raw.githubusercontent.com/lxgw/LxgwWenKai/50f4b182415a8c33d9a456df220b66a284e2509b/fonts/TTF/LXGWWenKai-Bold.ttf
+  font_bold_url: https://raw.githubusercontent.com/lxgw/LxgwWenKai/50f4b182415a8c33d9a456df220b66a284e2509b/fonts/TTF/LXGWWenKai-Medium.ttf
   site_name: "pst's Blog"
