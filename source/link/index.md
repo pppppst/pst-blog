@@ -6,7 +6,7 @@ aside: false
 comments: true
 ---
 
-欢迎交流与互访。启用 Giscus 后，可以在评论区留言申请交换友链。
+欢迎交流与互访！
 
 ## 友链
 
