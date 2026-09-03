@@ -58,6 +58,31 @@ test('build serves an optimized WebP home background instead of the PNG', () => 
   }
 })
 
+test('dark mode uses an optimized WebP background without gradient page chrome', () => {
+  const imagePath = path.join(publicDir, 'img', 'home-dark.webp')
+  assert.equal(fs.existsSync(imagePath), true, 'missing optimized home-dark.webp')
+
+  const image = fs.readFileSync(imagePath)
+  assert.equal(image.subarray(0, 4).toString('ascii'), 'RIFF')
+  assert.equal(image.subarray(8, 12).toString('ascii'), 'WEBP')
+  assert.ok(image.length < 600 * 1024, `home-dark.webp exceeds 600 KiB: ${image.length} bytes`)
+
+  const home = readPublic('index.html')
+  assert.match(
+    home,
+    /\[data-theme='dark'\] #body-wrap\.type-home,[\s\S]*?url\('\/img\/home-dark\.webp'\)/
+  )
+  assert.doesNotMatch(home, /\[data-theme='dark'\][^{]+\{[^}]*url\('\/img\/home-dark\.png'\)/)
+  assert.match(
+    home,
+    /#body-wrap\.type-home #page-header\.full_page,[\s\S]*?background:\s*transparent\s*!important/
+  )
+  assert.match(
+    home,
+    /#body-wrap\.type-home #footer,[\s\S]*?background:\s*transparent\s*!important/
+  )
+})
+
 test('every generated post references an existing 1200 by 630 Open Graph image', () => {
   const ogDir = path.join(publicDir, 'og-images')
   const posts = generatedPostRoutes()
@@ -240,7 +265,7 @@ test('section pages share the home banner', () => {
 
   const sectionPage = readPublic('categories/index.html')
   assert.match(sectionPage, /#page-header\.not-home-page\s*\{[^}]*url\('\/img\/home-img\.webp'\)[^}]*\}/)
-  assert.match(sectionPage, /\[data-theme='dark'\] #page-header\.not-home-page\s*\{[^}]*url\('\/img\/home-img\.webp'\)[^}]*\}/)
+  assert.match(sectionPage, /\[data-theme='dark'\] #page-header\.not-home-page\s*\{[^}]*url\('\/img\/home-dark\.webp'\)[^}]*\}/)
 })
 
 test('post detail pages use one fixed home image without gradient page chrome', () => {
