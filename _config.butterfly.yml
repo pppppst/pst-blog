@@ -22,12 +22,12 @@ aside:
   card_categories:
     enable: true
 
-# Giscus 需要先在发布仓启用 Discussions 并填写 repo_id/category_id。
-# 未完成前保持关闭，避免向 giscus.app 发送无效配置。
+# 评论使用发布仓 pppppst/pppppst.github.io 的 GitHub Discussions。
+# 分类固定为 Announcements，避免访客直接创建与页面无关的讨论主题。
 comments:
-  use:
+  use: Giscus
 
 giscus:
   repo: pppppst/pppppst.github.io
-  repo_id:
-  category_id:
+  repo_id: R_kgDORqPB-A
+  category_id: DIC_kwDORqPB-M4DEyrY
