@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..')
 const read = relativePath => fs.readFileSync(path.join(root, relativePath), 'utf8')
 
 test('Giscus is enabled with the publishing repository IDs', () => {
-  const config = read('_config.butterfly.yml')
+  const config = read('_config.panda.yml')
   assert.match(config, /comments:\s+[\s\S]*?use:\s*Giscus/)
   assert.match(config, /giscus:\s+[\s\S]*?repo:\s*pppppst\/pppppst\.github\.io/)
   assert.match(config, /giscus:\s+[\s\S]*?repo_id:\s*R_kgDORqPB-A/)

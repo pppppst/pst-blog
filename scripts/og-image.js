@@ -188,9 +188,9 @@ function renderPng(post, cfg, fontFiles) {
   return resvg.render().asPng()
 }
 
-// 1) 提供 og_image_url helper,供 Open_Graph.pug 直接计算每篇 post 的 og 图地址。
+// 1) 提供 site_og_image_url helper,避免与 Panda 内置 helper 冲突。
 //    不用 post 自定义属性,因为 hexo 的 post Document 属性不一定透传到模板的 page 变量。
-hexo.extend.helper.register('og_image_url', function (page) {
+hexo.extend.helper.register('site_og_image_url', function (page) {
   const cfg = getConfig(hexo)
   if (!cfg.enable || !page || !page.path) return ''
   const slug = String(page.path).replace(/\/index\.html$/, '').replace(/[\/\\]/g, '-')
@@ -198,7 +198,7 @@ hexo.extend.helper.register('og_image_url', function (page) {
 })
 
 // 2) 为每个 post 注册 PNG 生成 route(build 时渲染)
-hexo.extend.generator.register('og-image', function (locals) {
+hexo.extend.generator.register('site-og-image', function (locals) {
   const cfg = getConfig(hexo)
   if (!cfg.enable) return []
   return locals.posts.toArray()

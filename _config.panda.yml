@@ -1,0 +1,911 @@
+# Panda 1.1.4 站点配置：保留原博客文字、背景和显示设置。
+# RSS、OG 图片、碎碎念搜索/独立页/评论计数继续由站点 scripts/ 管理，避免重复生成。
+nav:
+  logo: null
+  display_title: true
+  display_post_title: true
+  fixed: true
+menu:
+  首页: / || fas fa-home
+  博客: /blog/ || fas fa-feather-alt
+  归档: /archives/ || fas fa-archive
+  分类: /categories/ || fas fa-folder-open
+  标签: /tags/ || fas fa-tags
+  友链: /link/ || fas fa-link
+  碎碎念: /memos/ || fas fa-comment-dots
+code_blocks:
+  theme: darker
+  macStyle: true
+  height_limit: 320
+  word_wrap: true
+  copy: true
+  language: true
+  shrink: false
+  fullpage: false
+social:
+  fab fa-github: https://github.com/pppppst || GitHub || '#24292f'
+  fas fa-rss: /atom.xml || RSS || '#ff6600'
+favicon: /img/avatar2.png
+avatar:
+  img: /img/avatar2.png
+  effect: true
+disable_top_img: false
+default_top_img: /img/home-img.webp
+index_img: /img/home-img.webp
+archive_img: /img/home-img.webp
+tag_img: /img/home-img.webp
+tag_per_img: null
+category_img: /img/home-img.webp
+category_per_img: null
+footer_img: false
+background: null
+cover:
+  index_enable: true
+  aside_enable: true
+  archives_enable: true
+  default_cover: null
+error_img:
+  flink: /img/friend_404.gif
+  post_page: /img/404.jpg
+error_404:
+  enable: false
+  subtitle: Page Not Found
+  background: /img/error-page.png
+post_meta:
+  page:
+    date_type: created
+    date_format: date
+    categories: true
+    tags: false
+    label: true
+  post:
+    position: left
+    date_type: both
+    date_format: date
+    categories: true
+    tags: true
+    label: true
+index_site_info_top: null
+index_top_img_height: null
+subtitle:
+  enable: true
+  effect: false
+  landing_effect: true
+  typed_option:
+    loop: false
+    showCursor: false
+  source: false
+  sub:
+    - 风物长宜放眼量
+index_layout: 3
+index_post_content:
+  method: 3
+  length: 500
+toc:
+  post: true
+  page: false
+  number: true
+  expand: false
+  style_simple: false
+  scroll_percent: true
+post_copyright:
+  enable: true
+  decode: false
+  author_href: null
+  license: CC BY-NC-SA 4.0
+  license_url: https://creativecommons.org/licenses/by-nc-sa/4.0/
+reward:
+  enable: false
+  text: null
+  QR_code: null
+post_edit:
+  enable: false
+  url: null
+related_post:
+  enable: true
+  limit: 6
+  date_type: created
+post_pagination: 1
+noticeOutdate:
+  enable: false
+  style: flat
+  limit_day: 365
+  position: top
+  message_prev: It has been
+  message_next: days since the last update, the content of the article may be outdated.
+footer:
+  nav: null
+  owner:
+    enable: true
+    since: 2025
+  copyright:
+    enable: true
+    version: true
+  custom_text: null
+aside:
+  enable: true
+  hide: false
+  button: true
+  mobile: true
+  position: right
+  display:
+    archive: false
+    tag: false
+    category: false
+    home: false
+  card_author:
+    enable: true
+    description: 记录具身智能、机器人导航、ROS2 与多智能体系统的学习和实践。
+    button:
+      enable: true
+      icon: fab fa-github
+      text: Follow Me
+      link: https://github.com/pppppst
+  card_announcement:
+    enable: true
+    content: 欢迎来到 pst's Blog。这里记录科研、项目实践、论文阅读与技术学习。
+  card_recent_post:
+    enable: true
+    limit: 5
+    sort: date
+    sort_order: null
+  card_newest_comments:
+    enable: false
+    sort_order: null
+    limit: 6
+    storage: 10
+    avatar: true
+  card_categories:
+    enable: true
+    limit: 8
+    expand: none
+    sort_order: null
+  card_tags:
+    enable: true
+    limit: 40
+    color: false
+    custom_colors: null
+    orderby: random
+    order: 1
+    sort_order: null
+  card_archives:
+    enable: true
+    type: monthly
+    format: MMMM YYYY
+    order: -1
+    limit: 8
+    sort_order: null
+  card_post_series:
+    enable: true
+    series_title: false
+    orderBy: date
+    order: -1
+  card_webinfo:
+    enable: true
+    post_count: true
+    last_push_date: true
+    sort_order: null
+    runtime_date: null
+rightside_bottom: null
+translate:
+  enable: false
+  default: 繁
+  defaultEncoding: 2
+  translateDelay: 0
+  msgToTraditionalChinese: 繁
+  msgToSimplifiedChinese: 簡
+readmode: true
+darkmode:
+  enable: true
+  button: true
+  autoChangeMode: 1
+  start: null
+  end: null
+rightside_scroll_percent: true
+rightside_item_order:
+  enable: false
+  hide: null
+  show: null
+rightside_config_animation: true
+anchor:
+  auto_update: false
+  click_to_scroll: false
+photofigcaption: false
+copy:
+  enable: true
+  copyright:
+    enable: false
+    limit_count: 150
+wordcount:
+  enable: true
+  post_wordcount: true
+  min2read: true
+  total_wordcount: true
+busuanzi:
+  site_uv: true
+  site_pv: true
+  page_pv: true
+math:
+  use: katex
+  per_page: true
+  hide_scrollbar: false
+  mathjax:
+    enableMenu: true
+    tags: none
+  katex:
+    copy_tex: false
+search:
+  use: local_search
+  placeholder: null
+  algolia_search:
+    hitsPerPage: 6
+  local_search:
+    preload: false
+    top_n_per_article: 1
+    unescape: false
+    pagination:
+      enable: false
+      hitsPerPage: 8
+    CDN: null
+  docsearch:
+    appId: null
+    apiKey: null
+    indexName: null
+    option: null
+share:
+  use: null
+  sharejs:
+    sites: facebook,x,wechat,weibo,qq
+  addtoany:
+    item: facebook,x,wechat,sina_weibo,facebook_messenger,email,copy_link
+comments:
+  use: Giscus
+  text: true
+  lazyload: false
+  count: true
+  card_post_count: true
+disqus:
+  shortname: null
+  apikey: null
+disqusjs:
+  shortname: null
+  apikey: null
+  option: null
+livere:
+  uid: null
+gitalk:
+  client_id: null
+  client_secret: null
+  repo: null
+  owner: null
+  admin: null
+  option: null
+valine:
+  appId: null
+  appKey: null
+  avatar: monsterid
+  serverURLs: null
+  bg: null
+  visitor: false
+  option: null
+waline:
+  serverURL: null
+  bg: null
+  pageview: false
+  option: null
+utterances:
+  repo: null
+  issue_term: pathname
+  light_theme: github-light
+  dark_theme: photon-dark
+  js: null
+  option: null
+facebook_comments:
+  app_id: null
+  user_id: null
+  pageSize: 10
+  order_by: social
+  lang: en_US
+twikoo:
+  envId: null
+  region: null
+  visitor: false
+  option: null
+giscus:
+  repo: pppppst/pppppst.github.io
+  repo_id: R_kgDORqPB-A
+  category_id: DIC_kwDORqPB-M4DEyrY
+  light_theme: light
+  dark_theme: dark
+  js: https://giscus.app/client.js
+  option:
+    data-mapping: pathname
+    data-strict: '0'
+    data-reactions-enabled: '1'
+    data-emit-metadata: '0'
+    data-input-position: top
+    data-lang: zh-CN
+remark42:
+  host: null
+  siteId: null
+  option: null
+artalk:
+  server: null
+  site: null
+  visitor: false
+  option: null
+chat:
+  use: null
+  rightside_button: false
+  button_hide_show: false
+chatra:
+  id: null
+tidio:
+  public_key: null
+crisp:
+  website_id: null
+baidu_analytics: null
+google_analytics: null
+cloudflare_analytics: null
+microsoft_clarity: null
+google_tag_manager:
+  tag_id: null
+  domain: null
+google_adsense:
+  enable: false
+  auto_ads: true
+  js: https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js
+  client: null
+  enable_page_level_ads: true
+ad:
+  index: null
+  aside: null
+  post: null
+site_verification: null
+category_ui: null
+tag_ui: null
+rounded_corners_ui: true
+text_align_justify: false
+mask:
+  header: true
+  footer: true
+preloader:
+  enable: true
+  source: 1
+  pace_css_url: null
+enter_transitions: true
+display_mode: light
+beautify:
+  enable: true
+  field: post
+  title_prefix_icon: \f863
+  title_prefix_icon_color: '#6ec6ff'
+font:
+  global_font_size: 1.1em
+  code_font_size: null
+  font_family: '''LXGW WenKai'',''Source Han Serif SC'',''Noto Serif SC'',''PingFang SC'',''Microsoft YaHei'',serif'
+  code_font_family: '''LXGW WenKai'',''Sarasa Mono SC'',''JetBrains Mono'',''Cascadia Code'',''Fira Code'',Consolas,monospace'
+blog_title_font:
+  font_link: null
+  font_family: '''LXGW WenKai'',''Source Han Sans SC'',''Noto Sans SC'',''PingFang SC'',''Microsoft YaHei'',sans-serif'
+hr_icon:
+  enable: true
+  icon: null
+  icon_top: null
+activate_power_mode:
+  enable: false
+  colorful: true
+  shake: true
+  mobile: false
+canvas_ribbon:
+  enable: false
+  size: 150
+  alpha: 0.6
+  zIndex: -1
+  click_to_change: false
+  mobile: false
+canvas_fluttering_ribbon:
+  enable: false
+  mobile: false
+canvas_nest:
+  enable: false
+  color: 0,0,255
+  opacity: 0.7
+  zIndex: -1
+  count: 99
+  mobile: false
+fireworks:
+  enable: false
+  zIndex: 9999
+  mobile: false
+click_heart:
+  enable: false
+  mobile: false
+clickShowText:
+  enable: false
+  text: null
+  fontSize: 15px
+  random: false
+  mobile: false
+lightbox: fancybox
+series:
+  enable: false
+  orderBy: title
+  order: 1
+  number: true
+abcjs:
+  enable: false
+  per_page: true
+mermaid:
+  enable: false
+  code_write: false
+  theme:
+    light: default
+    dark: dark
+  open_in_new_tab: true
+  zoom_pan: true
+chartjs:
+  enable: false
+  fontColor:
+    light: rgba(0, 0, 0, 0.8)
+    dark: rgba(255, 255, 255, 0.8)
+  borderColor:
+    light: rgba(0, 0, 0, 0.1)
+    dark: rgba(255, 255, 255, 0.2)
+  scale_ticks_backdropColor:
+    light: transparent
+    dark: transparent
+note:
+  style: flat
+  icons: true
+  border_radius: 3
+  light_bg_offset: 0
+pjax:
+  enable: true
+  exclude:
+    - /memos/
+    - /memos/index.html
+aplayerInject:
+  enable: false
+  per_page: true
+snackbar:
+  enable: false
+  position: bottom-left
+  bg_light: '#49b1f5'
+  bg_dark: '#1f1f1f'
+instantpage: true
+lazyload:
+  enable: true
+  native: false
+  field: site
+  placeholder: null
+  blur: false
+pwa:
+  enable: false
+  manifest: null
+  apple_touch_icon: null
+  favicon_32_32: null
+  favicon_16_16: null
+  mask_icon: null
+Open_Graph_meta:
+  enable: true
+  option:
+    twitter_card: summary_large_image
+structured_data:
+  enable: false
+  alternate_name: null
+css_prefix: true
+inject:
+  head:
+    - |
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" media="print" onload="this.media='all'">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@free-fonts/zhuque-fangsong@1.0.0/zhuque-fangsong.css" media="print" onload="this.media='all'">
+      <style>
+        #page-header.full_page {
+          background-image:
+            linear-gradient(rgba(20, 30, 50, 0.25), rgba(20, 30, 50, 0.25)),
+            url('/img/home-img.webp') !important;
+          background-size: cover;
+          background-position: center;
+        }
+
+        #body-wrap.type-landing #site-title {
+          display: none !important;
+        }
+
+        #body-wrap.type-landing #site-subtitle {
+          font-family: "Zhuque Fangsong", "FangSong", "STFangsong", serif;
+          font-size: clamp(1.4rem, 4.5vw, 4rem);
+        }
+
+        #page-header.post-bg {
+          background-image: linear-gradient(135deg, #4facfe 0%, #6ec6ff 25%, #a18cd1 55%, #fbc2eb 75%, #ffd2a8 100%) !important;
+          background-size: cover;
+          background-position: center;
+        }
+
+        #page-header.not-home-page {
+          background-image:
+            linear-gradient(rgba(20, 30, 50, 0.25), rgba(20, 30, 50, 0.25)),
+            url('/img/home-img.webp') !important;
+          background-size: cover;
+          background-position: center;
+        }
+
+        #page-header.not-top-img {
+          background: linear-gradient(135deg, #4facfe 0%, #6ec6ff 25%, #a18cd1 55%, #fbc2eb 75%, #ffd2a8 100%) !important;
+        }
+
+        #page-header.full_page:before {
+          background: linear-gradient(180deg, rgba(26, 73, 118, 0.08) 0%, rgba(60, 66, 122, 0.16) 100%) !important;
+        }
+
+        #page-header.post-bg:before {
+          background: linear-gradient(180deg, rgba(26, 73, 118, 0.08) 0%, rgba(60, 66, 122, 0.16) 100%) !important;
+        }
+
+        #page-header.not-home-page:before,
+        #page-header.not-top-img:before {
+          background: linear-gradient(180deg, rgba(26, 73, 118, 0.08) 0%, rgba(60, 66, 122, 0.16) 100%) !important;
+        }
+
+        #web_bg {
+          background: linear-gradient(180deg, #f3f9ff 0%, #edf2ff 55%, #fff8f3 100%);
+        }
+
+        #body-wrap.type-home,
+        #body-wrap.post,
+        #body-wrap.type-archive,
+        #body-wrap.type-categories,
+        #body-wrap.type-tags,
+        #body-wrap.type-link,
+        #body-wrap.type-shuoshuo {
+          min-height: 100vh;
+          background-image:
+            linear-gradient(rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.18)),
+            url('/img/home-img.webp');
+          background-attachment: fixed;
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+        }
+
+        #body-wrap.type-home #page-header.full_page,
+        #body-wrap.type-home #page-header.full_page:before {
+          background: transparent !important;
+        }
+
+        #body-wrap.post #page-header.post-bg,
+        #body-wrap.post #page-header.post-bg:before {
+          background: transparent !important;
+        }
+
+        #body-wrap.type-archive #page-header.not-home-page,
+        #body-wrap.type-categories #page-header.not-home-page,
+        #body-wrap.type-tags #page-header.not-home-page,
+        #body-wrap.type-link #page-header.not-home-page,
+        #body-wrap.type-shuoshuo #page-header.not-home-page {
+          background: transparent !important;
+        }
+
+        #body-wrap.type-archive #page-header.not-home-page:before,
+        #body-wrap.type-categories #page-header.not-home-page:before,
+        #body-wrap.type-tags #page-header.not-home-page:before,
+        #body-wrap.type-link #page-header.not-home-page:before,
+        #body-wrap.type-shuoshuo #page-header.not-home-page:before {
+          background: transparent !important;
+        }
+
+        #page-header.full_page #site-title,
+        #page-header.full_page #site-subtitle,
+        #page-header.full_page #subtitle,
+        #page-header.post-bg #post-info .post-title,
+        #page-header.post-bg #post-meta,
+        #page-header.post-bg #post-meta a,
+        #page-header.nav-fixed #nav a,
+        #page-header #nav .site-page,
+        #page-header #nav .menus_item_child li a {
+          color: #ffffff !important;
+          text-shadow: 0 2px 12px rgba(28, 58, 92, 0.38);
+        }
+
+        #page-header.not-top-img #nav .site-page,
+        #page-header.not-top-img #nav #toggle-menu,
+        #page-header.not-top-img #nav #search-button,
+        #page-header.not-top-img #nav #nav-right div,
+        #page-header.not-top-img #nav .menus_item_child li a {
+          color: #ffffff !important;
+        }
+
+        #page-header.nav-fixed #nav {
+          background: linear-gradient(135deg, rgba(79, 172, 254, 0.96) 0%, rgba(161, 140, 209, 0.96) 55%, rgba(255, 210, 168, 0.96) 100%) !important;
+          box-shadow: 0 8px 20px rgba(38, 79, 126, 0.2) !important;
+          backdrop-filter: saturate(130%) blur(6px);
+          -webkit-backdrop-filter: saturate(130%) blur(6px);
+        }
+
+        #page-header.nav-fixed #nav a,
+        #page-header.nav-fixed #nav .site-page,
+        #page-header.nav-fixed #nav .site-name,
+        #page-header.nav-fixed #nav #toggle-menu,
+        #page-header.nav-fixed #nav #search-button,
+        #page-header.nav-fixed #nav #nav-right div,
+        #page-header.nav-fixed #nav .menus_item_child li a {
+          color: #ffffff !important;
+          text-shadow: 0 2px 12px rgba(28, 58, 92, 0.38);
+        }
+
+        #page-header.not-top-img.nav-fixed #nav {
+          background: linear-gradient(135deg, rgba(79, 172, 254, 0.96) 0%, rgba(161, 140, 209, 0.96) 55%, rgba(255, 210, 168, 0.96) 100%) !important;
+          box-shadow: 0 8px 20px rgba(38, 79, 126, 0.2) !important;
+          backdrop-filter: saturate(130%) blur(6px);
+          -webkit-backdrop-filter: saturate(130%) blur(6px);
+        }
+
+        [data-theme='dark'] #page-header.full_page {
+          background-image:
+            linear-gradient(rgba(6, 12, 24, 0.25), rgba(6, 12, 24, 0.25)),
+            url('/img/home-dark.webp') !important;
+          background-size: cover;
+          background-position: center;
+        }
+
+        [data-theme='dark'] #page-header.post-bg {
+          background-image:
+            linear-gradient(rgba(6, 12, 24, 0.25), rgba(6, 12, 24, 0.25)),
+            url('/img/home-dark.webp') !important;
+          background-size: cover;
+          background-position: center;
+        }
+
+        [data-theme='dark'] #page-header.not-home-page {
+          background-image:
+            linear-gradient(rgba(6, 12, 24, 0.25), rgba(6, 12, 24, 0.25)),
+            url('/img/home-dark.webp') !important;
+        }
+
+        [data-theme='dark'] #page-header.not-top-img {
+          background-image:
+            linear-gradient(rgba(6, 12, 24, 0.25), rgba(6, 12, 24, 0.25)),
+            url('/img/home-dark.webp') !important;
+          background-size: cover;
+          background-position: center;
+        }
+
+        [data-theme='dark'] #page-header.full_page:before {
+          background: linear-gradient(180deg, rgba(6, 12, 24, 0.2) 0%, rgba(6, 12, 24, 0.38) 100%) !important;
+        }
+
+        [data-theme='dark'] #page-header.post-bg:before {
+          background: linear-gradient(180deg, rgba(6, 12, 24, 0.2) 0%, rgba(6, 12, 24, 0.38) 100%) !important;
+        }
+
+        [data-theme='dark'] #page-header.not-home-page:before,
+        [data-theme='dark'] #page-header.not-top-img:before {
+          background: linear-gradient(180deg, rgba(6, 12, 24, 0.2) 0%, rgba(6, 12, 24, 0.38) 100%) !important;
+        }
+
+        [data-theme='dark'] #web_bg {
+          background: linear-gradient(180deg, #0a0a1a 0%, #11132e 55%, #1a1529 100%);
+        }
+
+        [data-theme='dark'] #body-wrap.type-home,
+        [data-theme='dark'] #body-wrap.post,
+        [data-theme='dark'] #body-wrap.type-archive,
+        [data-theme='dark'] #body-wrap.type-categories,
+        [data-theme='dark'] #body-wrap.type-tags,
+        [data-theme='dark'] #body-wrap.type-link,
+        [data-theme='dark'] #body-wrap.type-shuoshuo {
+          background-image:
+            linear-gradient(rgba(6, 12, 24, 0.18), rgba(6, 12, 24, 0.18)),
+            url('/img/home-dark.webp');
+        }
+
+        [data-theme='dark'] #page-header.full_page #site-title,
+        [data-theme='dark'] #page-header.full_page #site-subtitle,
+        [data-theme='dark'] #page-header.full_page #subtitle,
+        [data-theme='dark'] #page-header.post-bg #post-info .post-title,
+        [data-theme='dark'] #page-header.post-bg #post-meta,
+        [data-theme='dark'] #page-header.post-bg #post-meta a,
+        [data-theme='dark'] #page-header.nav-fixed #nav a,
+        [data-theme='dark'] #page-header #nav .site-page,
+        [data-theme='dark'] #page-header #nav .menus_item_child li a {
+          color: #eaf4ff !important;
+          text-shadow: 0 2px 12px rgba(0, 0, 0, 0.42);
+        }
+
+        [data-theme='dark'] #page-header.not-top-img #nav .site-page,
+        [data-theme='dark'] #page-header.not-top-img #nav #toggle-menu,
+        [data-theme='dark'] #page-header.not-top-img #nav #search-button,
+        [data-theme='dark'] #page-header.not-top-img #nav #nav-right div,
+        [data-theme='dark'] #page-header.not-top-img #nav .menus_item_child li a {
+          color: #eaf4ff !important;
+        }
+
+        [data-theme='dark'] #page-header.nav-fixed #nav {
+          background: linear-gradient(135deg, rgba(2, 0, 36, 0.96) 0%, rgba(26, 36, 64, 0.96) 50%, rgba(157, 78, 221, 0.96) 100%) !important;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35) !important;
+          backdrop-filter: saturate(120%) blur(6px);
+          -webkit-backdrop-filter: saturate(120%) blur(6px);
+        }
+
+        [data-theme='dark'] #page-header.nav-fixed #nav a,
+        [data-theme='dark'] #page-header.nav-fixed #nav .site-page,
+        [data-theme='dark'] #page-header.nav-fixed #nav .site-name,
+        [data-theme='dark'] #page-header.nav-fixed #nav #toggle-menu,
+        [data-theme='dark'] #page-header.nav-fixed #nav #search-button,
+        [data-theme='dark'] #page-header.nav-fixed #nav #nav-right div,
+        [data-theme='dark'] #page-header.nav-fixed #nav .menus_item_child li a {
+          color: #eaf4ff !important;
+          text-shadow: 0 2px 12px rgba(0, 0, 0, 0.42);
+        }
+
+        [data-theme='dark'] #page-header.not-top-img.nav-fixed #nav {
+          background: linear-gradient(135deg, rgba(2, 0, 36, 0.96) 0%, rgba(26, 36, 64, 0.96) 50%, rgba(157, 78, 221, 0.96) 100%) !important;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35) !important;
+          backdrop-filter: saturate(120%) blur(6px);
+          -webkit-backdrop-filter: saturate(120%) blur(6px);
+        }
+
+        .read-mode #page-header.post-bg {
+          background-image: linear-gradient(135deg, #4facfe 0%, #6ec6ff 25%, #a18cd1 55%, #fbc2eb 75%, #ffd2a8 100%) !important;
+          background-size: cover !important;
+          background-position: center !important;
+        }
+
+        .read-mode #page-header.post-bg:before {
+          opacity: 1 !important;
+          background: linear-gradient(180deg, rgba(26, 73, 118, 0.08) 0%, rgba(60, 66, 122, 0.16) 100%) !important;
+        }
+
+        [data-theme='dark'] .read-mode #page-header.post-bg {
+          background-image:
+            linear-gradient(rgba(6, 12, 24, 0.25), rgba(6, 12, 24, 0.25)),
+            url('/img/home-dark.webp') !important;
+        }
+
+        [data-theme='dark'] .read-mode #page-header.post-bg:before {
+          opacity: 1 !important;
+          background: linear-gradient(180deg, rgba(6, 12, 24, 0.2) 0%, rgba(6, 12, 24, 0.38) 100%) !important;
+        }
+
+        #footer {
+          background: linear-gradient(135deg, #4facfe 0%, #6ec6ff 25%, #a18cd1 55%, #fbc2eb 75%, #ffd2a8 100%) !important;
+        }
+
+        #footer::before {
+          background: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        #footer-wrap,
+        #footer-wrap a {
+          color: #eaf6ff !important;
+        }
+
+        [data-theme='dark'] #footer {
+          background: linear-gradient(135deg, #020024 0%, #090979 25%, #1a2440 50%, #5b425d 75%, #9d4edd 100%) !important;
+        }
+
+        [data-theme='dark'] #footer::before {
+          background: rgba(0, 0, 0, 0.24) !important;
+        }
+
+        #body-wrap.type-home #page-header.nav-fixed #nav,
+        #body-wrap.post #page-header.nav-fixed #nav,
+        #body-wrap.type-archive #page-header.nav-fixed #nav,
+        #body-wrap.type-categories #page-header.nav-fixed #nav,
+        #body-wrap.type-tags #page-header.nav-fixed #nav,
+        #body-wrap.type-link #page-header.nav-fixed #nav,
+        #body-wrap.type-shuoshuo #page-header.nav-fixed #nav {
+          background: transparent !important;
+          box-shadow: none !important;
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+        }
+
+        #body-wrap.type-home #footer,
+        #body-wrap.post #footer,
+        #body-wrap.type-archive #footer,
+        #body-wrap.type-categories #footer,
+        #body-wrap.type-tags #footer,
+        #body-wrap.type-link #footer,
+        #body-wrap.type-shuoshuo #footer,
+        #body-wrap.type-home #footer::before,
+        #body-wrap.post #footer::before,
+        #body-wrap.type-archive #footer::before,
+        #body-wrap.type-categories #footer::before,
+        #body-wrap.type-tags #footer::before,
+        #body-wrap.type-link #footer::before,
+        #body-wrap.type-shuoshuo #footer::before {
+          background: transparent !important;
+        }
+
+        [data-theme='dark'] #footer-wrap,
+        [data-theme='dark'] #footer-wrap a {
+          color: #d8e9f7 !important;
+        }
+
+        .avatar-img {
+          animation: avatar_turn_around 8s linear infinite !important;
+        }
+
+        /* Only enlarge article body text on post pages */
+        #post #article-container {
+          font-size: 1.15em;
+        }
+
+        /* Keep the navigation legible over the light banner on every page */
+        #body-wrap #page-header #nav,
+        #body-wrap #page-header #nav * {
+          color: #000000 !important;
+          text-shadow: 0 1px 8px rgba(255, 255, 255, 0.5);
+        }
+
+        #body-wrap.type-home #page-header.full_page #site-title,
+        #body-wrap.type-home #page-header.full_page #site-subtitle,
+        #body-wrap.type-home #page-header.full_page #subtitle {
+          color: #000000 !important;
+          text-shadow: 0 1px 10px rgba(255, 255, 255, 0.55);
+        }
+
+        #body-wrap.type-archive #page-header.not-home-page #site-title,
+        #body-wrap.type-categories #page-header.not-home-page #site-title,
+        #body-wrap.type-tags #page-header.not-home-page #site-title,
+        #body-wrap.type-link #page-header.not-home-page #site-title,
+        #body-wrap.type-shuoshuo #page-header.not-home-page #site-title {
+          color: #000000 !important;
+          text-shadow: 0 1px 10px rgba(255, 255, 255, 0.55);
+        }
+
+        /* Keep post titles and all publication metadata legible over the light background */
+        #body-wrap.post #page-header.post-bg #post-info,
+        #body-wrap.post #page-header.post-bg #post-info * {
+          color: #000000 !important;
+          text-shadow: 0 1px 10px rgba(255, 255, 255, 0.55);
+        }
+
+        /* Fix X/Twitter share icon visibility */
+        .social-share .icon-x {
+          color: #ffffff !important;
+          border-color: rgba(255, 255, 255, 0.85) !important;
+        }
+        .social-share .icon-x:hover {
+          background: #000000 !important;
+          color: #ffffff !important;
+        }
+        [data-theme='dark'] .social-share .icon-x {
+          color: #ffffff !important;
+          border-color: rgba(255, 255, 255, 0.7) !important;
+        }
+        [data-theme='dark'] .social-share .icon-x:hover {
+          background: rgba(255, 255, 255, 0.9) !important;
+          color: #000000 !important;
+        }
+      </style>
+    - <link rel="alternate" type="application/atom+xml" title="pst's Blog" href="/atom.xml">
+  bottom:
+    - <script src="/js/fix-link-target.js"></script>
+CDN:
+  internal_provider: local
+  third_party_provider: jsdelivr
+  version: true
+  custom_format: null
+  option: null
+gradient:
+  enable: false
+blog_series:
+  enable: false
+feed:
+  enable: false
+og_image:
+  enable: false
+link_target_blank: false
+memos:
+  enable: true
+  path: /memos/
+  data_key: shuoshuo
+  latest_card: true
+  latest_excerpt: 120
+  standalone_pages: false
+  search_injection: false
+  comment_count: false

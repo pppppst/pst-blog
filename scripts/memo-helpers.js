@@ -2,7 +2,8 @@
 // 首页最新碎碎念卡片用的 helper(pug 模板里无法直接访问 hexo.render,故注册为 helper)
 'use strict'
 
-hexo.extend.helper.register('latest_memo', function () {
+// Panda already supplies this helper; retain this script for the old theme snapshot.
+if (hexo.config.theme === 'butterfly') hexo.extend.helper.register('latest_memo', function () {
   const memos = (hexo.locals.get('data').shuoshuo || []).slice().sort((a, b) => new Date(b.date) - new Date(a.date))
   if (!memos.length) return null
   const latest = memos[0]

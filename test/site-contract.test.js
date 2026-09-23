@@ -103,7 +103,8 @@ test('every generated post references an existing 1200 by 630 Open Graph image',
 test('home page belongs to pst and does not expose reference identity', () => {
   const home = readPublic('index.html')
   assert.match(home, /pst(?:'s Blog|pppppst)/i)
-  assert.doesNotMatch(home, /SpeechlessPanda|859635282@qq\.com/i)
+  // Panda's upstream credit is expected; personal content must still belong to pst.
+  assert.doesNotMatch(home.replaceAll('https://github.com/SpeechlessPanda/hexo-theme-panda', ''), /SpeechlessPanda|859635282@qq\.com/i)
 })
 
 test('author card renders a visible dark GitHub social icon', () => {
