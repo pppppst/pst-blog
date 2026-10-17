@@ -256,6 +256,8 @@ memos:
   comment_count: true      # build-time Giscus counts -> auto-expand commented memos
 ```
 
+While the data file is missing or empty, the theme shows one built-in sample memo ("Hello, it's my blog!") on the timeline, the latest-memo card and the feed, so a fresh site demonstrates the format end to end. It disappears everywhere the moment you write your first real entry, and it is never persisted into your `db.json`.
+
 Comments use Giscus (`comments.use: Giscus` + `giscus.*`, same as Butterfly). Each memo gets its own discussion via the theme's multi-iframe giscus `/widget` integration.
 
 > `comment_count` needs `GH_DISCUSSION_TOKEN` (a GitHub token with discussions read access) in the build environment. Without it, the step is skipped silently and comment areas stay collapsed.
@@ -311,11 +313,11 @@ feed:
   path: atom.xml
   post_limit: 20
   excerpt_limit: 140
-  update_notify_hours: 24  # re-push posts updated more than 24h after publish
+  update_notify_hours: 24  # re-push posts with explicit front-matter `updated:` >24h after `date:`
   include_memos: true
 ```
 
-Entry identity lives entirely in the URL path (never query/fragment), which every reader preserves; memo entries link to their standalone pages and update entries to auto-generated redirect stubs. Series chapters are ordinary posts in the feed; series `index.md` is not a post and never appears. A series card on the post stream is dated by its latest chapter, so a new chapter also moves the card.
+Entry identity lives entirely in the URL path (never query/fragment), which every reader preserves; memo entries link to their standalone pages and update entries to auto-generated redirect stubs. Entry ids derive from file **content**, never from file mtime (which is just checkout time on CI): rebuilding after any unrelated change — e.g. adding a memo — never re-pushes old posts. New posts scaffold with `updated: false` and `sticky: false`; to re-push a revised post, flip `updated` to a real date (`updated: 2026-09-28 21:00:00`) more than `update_notify_hours` after `date:` — `false`/`null`/empty all mean "never revised" and are ignored. The stub id is a content hash, so every further edit notifies exactly once more, and ids stop moving the moment you stop editing. Series chapters are ordinary posts: they scaffold the same keys and re-push the same way. Memo dates accept `YYYY-MM-DD HH:mm` (also ISO `T` or date-only); a memo with an unparseable date is skipped with a build warning. Series `index.md` is not a post and never appears in the feed. A series card on the post stream is dated by its latest chapter, so a new chapter also moves the card.
 
 ### OG share images
 
@@ -358,7 +360,7 @@ Butterfly's `background` paints the page background (`#web_bg`). Panda adds one 
 background: /img/bg.webp        # an array works too — a random pick on each load
 ```
 
-Why it lines up: `#web_bg` is a viewport-sized box with `background-size: cover` + `background-position: center`. The nav rule uses the same geometry with `background-attachment: fixed`, so its 60px window shows exactly the top strip of the rendered page background — same pixels, no seam, no scroll.
+Why it lines up: `#web_bg` is a viewport-sized box with `background-size: cover` + `background-position: center`. Painting that same `cover` onto the 60px `#nav` box zooms into the photo's middle. The scrolled bar instead uses a viewport-sized `#nav::before` (`100vw×100vh`, `cover`, `center`, clipped to 60px) so it shows the top strip of the rendered page background — same pixels, no seam, no scroll.
 
 Legibility: the band carries a scrim (`gradient.nav_band_mask_light/dark`) under white / `#eaf4ff` nav text. Measured against a mid-tone photo: 5.0:1 in light mode, 5.2:1 in dark mode. Unusually light or dark image? Retune:
 
@@ -377,7 +379,7 @@ Edge cases:
 
 - A color or a raw CSS gradient in `background` has no "top band", so the nav keeps the normal gradient bar.
 - A random-array `background` keeps the nav on the image `#web_bg` actually picked (synced at runtime, PJAX included).
-- iOS Safari treats `background-attachment: fixed` as `scroll`, which would zoom the image into the 60px bar. There the theme drops the image and keeps the scrim + blur.
+- iOS Safari still mishandles a viewport-locked image in the 60px bar. There the theme drops the image layer and keeps the scrim + blur.
 
 ### Misc
 

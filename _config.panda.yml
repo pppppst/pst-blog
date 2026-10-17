@@ -1,5 +1,5 @@
-# Panda 1.1.4 站点配置：保留原博客文字、背景和显示设置。
-# RSS、OG 图片、碎碎念搜索/独立页/评论计数继续由站点 scripts/ 管理，避免重复生成。
+# Panda 1.1.6 站点配置：保留原博客文字、背景和显示设置。
+# RSS 和碎碎念独立页由 Panda 管理；OG 图片、搜索和评论计数仍使用站点脚本。
 nav:
   logo: null
   display_title: true
@@ -465,6 +465,7 @@ pjax:
   exclude:
     - /memos/
     - /memos/index.html
+    - /atom.xml
 aplayerInject:
   enable: false
   per_page: true
@@ -896,7 +897,17 @@ gradient:
 blog_series:
   enable: false
 feed:
-  enable: false
+  enable: true
+  path: atom.xml
+  post_limit: 20
+  excerpt_limit: 140
+  update_notify_hours: 24
+  include_memos: true
+  # 已发布过的 RSS 更新链接继续跳转原文，不再加入订阅条目。
+  legacy_update_paths:
+    2026/09/01/blog-ready/:
+      - 20260903-120545
+      - 20260903-120611
 og_image:
   enable: false
 link_target_blank: false
@@ -906,6 +917,6 @@ memos:
   data_key: shuoshuo
   latest_card: true
   latest_excerpt: 120
-  standalone_pages: false
+  standalone_pages: true
   search_injection: false
   comment_count: false

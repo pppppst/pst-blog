@@ -149,7 +149,8 @@ function buildMemoEntry (item, memosUrl, author, usedIds) {
   }
 }
 
-hexo.extend.generator.register('atom', function (locals) {
+// Panda 1.1.6 owns the feed and memo pages; keep this generator for the old snapshot only.
+if (hexo.config.theme !== 'panda') hexo.extend.generator.register('atom', function (locals) {
   const { config } = this
   let siteUrl = config.url
   if (siteUrl[siteUrl.length - 1] !== '/') siteUrl += '/'

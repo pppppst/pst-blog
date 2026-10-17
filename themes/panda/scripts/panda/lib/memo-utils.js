@@ -63,11 +63,18 @@ function stripHtml (html) {
   return String(html || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
 }
 
-// Parse "2026-08-23 23:30" (seconds optional) in the site timezone
+// Parse "2026-08-23 23:30" (seconds optional, "T" separator and date-only also
+// accepted) in the site timezone
 function parseMemoDate (hexo, str) {
-  const t = String(str == null ? '' : str).trim()
+  // Hexo/YAML interprets unquoted local timestamps as UTC Date objects.
+  // Keep their written wall-clock fields, as the timeline's shuoshuoFN does.
+  const isDate = Object.prototype.toString.call(str) === '[object Date]'
+  if (isDate && !Number.isFinite(str.getTime())) return null
+  // Warehouse restores the same YAML timestamp as an ISO string on warm builds.
+  const t = (isDate ? str.toISOString().slice(0, 19) : String(str == null ? '' : str).trim())
+    .replace(/(?:\.\d+)?Z$/, '')
   if (!t) return null
-  const m = moment.tz(t, ['YYYY-MM-DD HH:mm:ss', 'YYYY-MM-DD HH:mm'], siteTimezone(hexo))
+  const m = moment.tz(t, ['YYYY-MM-DD HH:mm:ss', 'YYYY-MM-DD HH:mm', 'YYYY-MM-DDTHH:mm:ss', 'YYYY-MM-DDTHH:mm', 'YYYY-MM-DD'], true, siteTimezone(hexo))
   return m.isValid() ? m.toDate() : null
 }
 

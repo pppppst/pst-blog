@@ -15,8 +15,8 @@ nav:
   display_post_title: true
   # Whether to fix navigation bar
   fixed: false
-  # Panda: the fixed nav bar paints the top band of the `background` image, locked to the
-  # viewport and aligned with #web_bg (it no longer scrolls away with the page).
+  # Panda: the fixed nav bar paints the top band of the `background` image via a
+  # viewport-sized #nav::before (cover on the 60px bar itself zooms into the photo).
   # Ignored when `background` is a color or raw CSS — a plain background has no top band.
   background_band: true
   # Nav text color over that band. Tune these when your image is very light or very dark.
@@ -1151,6 +1151,8 @@ home_about:
 
 # Memos (shuoshuo) enhancements
 # Page setup: create source/memos/index.md with `type: shuoshuo`, data in source/_data/shuoshuo.yml
+# A built-in sample memo ("Hello, it's my blog!") demonstrates the feature until
+# you write your first entry in the data file
 memos:
   enable: true
   # Path of the memos page (used by the latest-memo card link and standalone pages)
@@ -1182,7 +1184,8 @@ feed:
   path: atom.xml
   post_limit: 20
   excerpt_limit: 140
-  # Posts updated within N hours get a fresh guid so readers are notified
+  # Re-push a post only when it has an explicit front-matter `updated:` more
+  # than N hours after `date:` (mtime is ignored: it is checkout time on CI)
   update_notify_hours: 24
   include_memos: true
 

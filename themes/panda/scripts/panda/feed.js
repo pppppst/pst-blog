@@ -8,8 +8,8 @@
 // all distinguishing info goes into the URL **path** — never query or fragment,
 // which some readers normalize away. Those URLs must really resolve:
 //   - each memo gets a standalone page (scripts/panda/memos.js)
-//   - each meaningful post update gets a stub page <post>/u/<timestamp>/
-//     (meta refresh back to the post)
+//   - each meaningful post update (explicit front-matter `updated:`) gets a
+//     stub page <post>/u/<content-hash>/ (meta refresh back to the post)
 'use strict'
 
 const { escapeXml, cdata, stripHtml, parseMemoDate, memoSlugs } = require('./lib/memo-utils')
@@ -19,10 +19,7 @@ function feedConfig () {
   return (hexo.theme.config && hexo.theme.config.feed) || {}
 }
 
-// Date -> compact stamp "20260804-131600" (post update stub paths)
-function compactStamp (date) {
-  return date.toISOString().slice(0, 19).replace(/-/g, '').replace(/:/g, '').replace('T', '-')
-}
+const { explicitUpdated, contentStamp } = require('./lib/post-updated')
 
 function postSummary (post, excerptLimit) {
   if (post.description) return post.description
@@ -49,12 +46,14 @@ function updateStubHtml (post, __) {
 
 function buildPostEntry (post, authorXml, cfg, __) {
   const published = post.date.toDate()
-  const updated = post.updated ? post.updated.toDate() : published
+  // Reader update timestamps must be stable too, not just ids: checkout mtime
+  // must never look like a new revision to an Atom reader.
+  const updated = explicitUpdated(post) && post.updated ? post.updated.toDate() : published
   const notifyMs = (cfg.update_notify_hours == null ? 24 : cfg.update_notify_hours) * 3600 * 1000
   // Update long after publish -> fresh id/link via stub page (readers can't collapse it);
   // otherwise keep the stable permalink identity to avoid false notifications
-  const meaningfulUpdate = (updated - published) > notifyMs
-  const updateUrl = meaningfulUpdate ? `${post.permalink}u/${compactStamp(updated)}/` : null
+  const meaningfulUpdate = explicitUpdated(post) && (updated - published) > notifyMs
+  const updateUrl = meaningfulUpdate ? `${post.permalink}u/${contentStamp(post)}/` : null
   const id = updateUrl || post.permalink
   const categories = [
     ...(post.categories ? post.categories.toArray() : []),
@@ -65,7 +64,7 @@ function buildPostEntry (post, authorXml, cfg, __) {
   return {
     published,
     updated,
-    stubRoute: updateUrl ? { path: `${post.path}u/${compactStamp(updated)}/index.html`, data: updateStubHtml(post, __) } : null,
+    stubRoute: updateUrl ? { path: `${post.path}u/${contentStamp(post)}/index.html`, data: updateStubHtml(post, __) } : null,
     xml: `<entry>${authorXml}${categories}<content type="html">${cdata(content)}</content>` +
       `<id>${escapeXml(id)}</id><link href="${escapeXml(id)}"/>` +
       `<published>${published.toISOString()}</published>` +
@@ -117,6 +116,16 @@ hexo.extend.generator.register('panda-atom-feed', function (locals) {
     return entry
   })
 
+  // Keep previously published timestamp URLs readable after switching to hashes.
+  // These redirects are never feed entries, so they cannot trigger a re-push.
+  const legacyPaths = cfg.legacy_update_paths || {}
+  posts.toArray().forEach(post => {
+    for (const stamp of legacyPaths[post.path] || []) {
+      if (!/^\d{8}-\d{6}$/.test(stamp)) continue
+      routes.push({ path: `${post.path}u/${stamp}/index.html`, data: updateStubHtml(post, __) })
+    }
+  })
+
   // Memo entries (all of them)
   if (memosEnabled(hexo) && cfg.include_memos !== false) {
     const memos = getMemos(hexo, locals.data)
@@ -126,6 +135,7 @@ hexo.extend.generator.register('panda-atom-feed', function (locals) {
       memos.forEach((item, i) => {
         const entry = buildMemoEntry(item, slugs[i], memosUrl, config.author, cfg, memosTitle)
         if (entry) entries.push(entry)
+        else hexo.log.warn(`[panda-feed] skipping memo with unparseable date: ${JSON.stringify(item.date)} (expected "YYYY-MM-DD HH:mm")`)
       })
     }
   }
@@ -141,7 +151,7 @@ hexo.extend.generator.register('panda-atom-feed', function (locals) {
     }, new Date(0))
     : new Date()
   const xml = '<?xml version="1.0" encoding="utf-8"?>\n' +
-    '<feed xmlns="http://www.w3.org/2005/Atom">' +
+    `<feed xmlns="http://www.w3.org/2005/Atom" xml:base="${escapeXml(siteUrl)}">` +
     authorXml +
     '<generator uri="https://github.com/SpeechlessPanda/hexo-theme-panda">Hexo Panda</generator>' +
     `<id>${escapeXml(siteUrl)}</id>` +

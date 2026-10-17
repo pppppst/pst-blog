@@ -2,11 +2,60 @@
 
 All notable changes to [hexo-theme-panda](https://github.com/SpeechlessPanda/hexo-theme-panda) are documented here.
 
-## [Unreleased]
+## [1.1.6] - 2026-09-28
+
+### Added
+
+- Built-in sample memo: while `source/_data/shuoshuo.yml` is missing/empty, the theme injects one sample entry ("Hello, it's my blog!") into the Data model at `generateBefore` (removed at `generateAfter`, never persisted to `db.json`), so a fresh site shows the timeline, latest-memo card, standalone page and feed entry working end to end. The first real entry replaces it everywhere.
+- `hexo new` posts now scaffold `updated: false` (scripts/panda/updated-scaffold.js, `hexo.on('new')` — site scaffolds always win over theme-side scaffold defaults, so the post-creation rewrite is the reliable seam). `false`/`null`/empty `updated:` values mean "never revised" and never trigger a re-push; flipping to a real date re-pushes once, and every subsequent edit re-pushes exactly once more (smoke phases 6-7: second revision gets a fresh hash id, an unchanged rebuild does not move it). Update-identity logic extracted to `scripts/panda/lib/post-updated.js` with unit tests (`test/post-updated.test.js`, 12 cases).
+- New posts also scaffold `sticky: false` (same `hexo.on('new')` hook; added independently of `updated:`, either missing key is inserted after `date:`). Series chapters are covered too — they are ordinary posts under `_posts/<series>/`, and smoke phase 8 pins that an explicit `updated:` on a chapter produces the hash-stub re-push entry (`/S8SERIES/ch1/u/<hash>/`) with an on-disk stub page, while the series `index.md` never enters the feed.
+
+### Fixed
+
+- RSS false re-push on CI: post update-notification ids derived from `post.updated`, which under Hexo's default `updated_option: mtime` is the file mtime — checkout time on CI (GitHub Actions, Netlify, ...). Any rebuild (e.g. adding a memo) re-pushed every old post with a fresh `<post>/u/<timestamp>/` id; readers surfaced the newest one, i.e. "adding a 碎碎念 re-pushes the latest blog post". Re-push now requires an explicit front-matter `updated:` holding a real date (`false`/`null`/empty don't count; mtime is ignored), and the stub id is a content hash of the raw file instead of a timestamp: same content → same id on every machine, any edit → exactly one fresh notification. Sites that relied on mtime-based re-push should add `updated:` to the post's front-matter when revising it. Upgrading reverts mtime-stubbed posts to their permalink id once (a one-time, bounded reader notification).
+- Memos with dates in ISO `T` form (`2026-08-12T08:15`) or date-only were silently dropped from the feed (`parseMemoDate` accepted only `YYYY-MM-DD HH:mm[:ss]`). Both forms now parse, and a memo that still fails is skipped with a build warning naming the bad value instead of vanishing silently.
+
+### Tests
+
+- New `test/_smoke_feed.js`: three-phase CI simulation (fresh-checkout mtimes per build, `db.json` deleted) asserts post/memo entry ids stay stable across builds, a newly added memo appears, ISO-`T` memo dates enter the feed, and an explicit `updated:` post gets a hash stub id plus an on-disk stub page. Red before the fix (`post id unstable across CI builds`), green after. Full suite `node --test test/*.test.js` 33/33; real site (`D:/project/blog`, Hexo 8.1.2) rebuilt against the working tree: all 33 memo entries intact, all post ids stable permalinks, zero mtime stubs; installed 1.1.5 package restored afterwards.
+- Sample memo: smoke phase 5 asserts it appears in the feed, on the `/memos/` timeline page and as a standalone page when the data file is absent. The first locals-based injection attempt went red here — Hexo rebuilds `locals.data` from the Data model on every generate — the shipped implementation injects at the Data-model seam (`generateBefore`/`generateAfter`).
+
+### Release audit
+
+| Check | Result |
+|-------|--------|
+| Dependency / security | No dependency change. New code is local-only: front-matter regex parsing, sha1 of raw file bytes (Node built-in `crypto`), one Data-model insert/remove per generate, one `hexo.on('new')` file rewrite. No network surface. |
+| Tests | `node --test test/*.test.js` **46/46** (12 new post-updated cases). Smokes green: feed (8 phases: CI-mtime stability, new memo, ISO-`T` date, explicit-updated stub, sample memo, repeated-revision, no-change stability, series chapter), series, nav band, hideToggle, blog header. |
+| Packaging | New files live under `scripts/` (already in npm `files`). Version bump is load-bearing: the local `?v=` reads `package.json`, so 1.1.6 is also the cache-bust. |
+| Runtime smoke | Real site (`D:/project/blog`, Hexo 8.1.2) via `pnpm patch`: clean rebuild 136 files, `verify-feed` 53 entries unique link/id, 33 memo path ids, zero mtime stubs; `hexo new` and `hexo new --series` chapters both scaffold `updated: false` + `sticky: false`, series `index.md` untouched. |
+| Performance | One sha1 over each post's raw bytes per build (≤20 posts by `post_limit` for the id, regex on front-matter head only); one model insert/remove per generate. No render-path or runtime JS change. |
+| Docs | README EN/CN (feed identity, scaffold keys, sample memo, memo date formats), `_config.yml` comments, this changelog. |
+| Content / assets | Sample memo is plain text, no new fonts/CDN/images. |
+| Deferred | npm publish is manual (`npm publish` after the GitHub release). Edited memos still don't resurface in the feed (no `updated` concept in `shuoshuo.yml`). Update-stub pages of superseded hashes 404 on CI builds (pre-existing, same as timestamp stubs). |
+
+
+## [1.1.5] - 2026-09-23
+
+### Fixed
+
+- Scrolled nav band no longer zooms into the middle of the background photo. `background-size: cover` on the 60px `#nav` box sized the image against that bar, so the window showed a random mid-slice instead of the top of `#web_bg`. The band now paints a viewport-sized `#nav::before` (`100vw×100vh`, `cover`, `center`, clipped to 60px). Rest-state `#nav` stays transparent. iOS still drops the image layer and keeps the scrim + blur.
 
 ### Changed
 
 - Upgrading docs: note that a registry mirror which has not caught up yet makes `npm update` report "Already up to date" while a newer release exists on npm — pin the version instead (`npm install hexo-theme-panda@latest`).
+
+### Release audit
+
+| Check | Result |
+|-------|--------|
+| Dependency / security | No dependency change. CSS-only: one extra pseudo-element on the scrolled nav, no network, no filesystem writes. |
+| Tests | `node --test test/*.test.js` **33/33**. `test/_smoke_nav_band.js` single / array / color. Smoke now pins `::before`, `100vw`/`100vh`, `clip-path`, and forbids `background-attachment: fixed` on the 60px box. Existing smokes (blog header, series, hideToggle) pass. |
+| Packaging | Same `files` as 1.1.4. Version bump is load-bearing — the local `?v=` reads `package.json`, so 1.1.5 is also the cache-bust. |
+| Runtime smoke | Isolated nav-band generate smoke: single / array / color. Real site (`D:/project/blog`, Hexo 8.1.2) rebuilt against the working tree: start banner `1.1.5`, closing line `[panda] theme 1.1.5 · Hexo 8.1.2 · 145 files generated`, footer `Panda 1.1.5`, assets `?v=1.1.5`. Restored the installed 1.1.4 package afterwards. |
+| Performance | One extra composited layer on the 60px bar while scrolled. No extra JS listeners. |
+| Docs | README EN/CN "Website background & nav band", `_config.yml` comments, this changelog. NOTICE unchanged (behavior, not a new feature). |
+| Content / assets | No new fonts, no CDN. |
+| Deferred | npm publish is manual (`npm publish` after the GitHub release). |
 
 ## [1.1.4] - 2026-09-22
 
@@ -135,6 +184,8 @@ All notable changes to [hexo-theme-panda](https://github.com/SpeechlessPanda/hex
 
 Initial public release. Fork of hexo-theme-butterfly 5.7.0 with memos, Atom feed, OG images, home-as-about, and gradient visuals.
 
+[1.1.6]: https://github.com/SpeechlessPanda/hexo-theme-panda/compare/1.1.5...1.1.6
+[1.1.5]: https://github.com/SpeechlessPanda/hexo-theme-panda/compare/1.1.4...1.1.5
 [1.1.4]: https://github.com/SpeechlessPanda/hexo-theme-panda/compare/1.1.3...1.1.4
 [1.1.3]: https://github.com/SpeechlessPanda/hexo-theme-panda/compare/1.1.2...1.1.3
 [1.1.2]: https://github.com/SpeechlessPanda/hexo-theme-panda/compare/1.1.1...1.1.2

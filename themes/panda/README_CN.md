@@ -262,6 +262,8 @@ memos:
   comment_count: true      # 构建时查 Giscus 评论数，有评论的自动展开
 ```
 
+数据文件缺失或为空时，主题会内置一条示例碎碎念（"Hello, it's my blog!"），在时间线页、文章流最新卡片和 feed 里都能看到，新站开箱即可看到完整效果。你写下第一条真正的碎碎念后它立刻从所有位置消失，且不会写入你的 `db.json`。
+
 评论基于 Giscus（`comments.use: Giscus` + `giscus.*`，与 Butterfly 相同）。每条碎碎念一个独立 discussion，嵌入方式是主题自带的 giscus `/widget` 多 iframe 方案，同页多条互不影响。
 
 > `comment_count` 需要构建环境提供 `GH_DISCUSSION_TOKEN`（GitHub token，discussions 读权限）。没有 token 时静默跳过，评论区保持默认折叠。
@@ -318,11 +320,11 @@ feed:
   path: atom.xml
   post_limit: 20
   excerpt_limit: 140
-  update_notify_hours: 24  # 旧文更新超过 24h 换新 id 重新推送
+  update_notify_hours: 24  # 仅当 front-matter 显式写了 updated: 且距 date: 超过 24h 才换新 id 重推
   include_memos: true
 ```
 
-条目身份标识全部放在 URL 路径里（不用 query/fragment），兼容所有阅读器；碎碎念条目链接指向独立页，旧文更新条目指向自动生成的跳转 stub 页。系列章节是普通文章，会出现在 feed 里；系列 `index.md` 不是文章、不进 feed。文章流上系列卡片的时间取最新一章，所以新章节也会把卡片顶上去。
+条目身份标识全部放在 URL 路径里（不用 query/fragment），兼容所有阅读器；碎碎念条目链接指向独立页，旧文更新条目指向自动生成的跳转 stub 页。条目 id 由文件**内容**派生，绝不依赖文件 mtime（CI 上 mtime 就是 checkout 时间）：任何无关改动（比如加一条碎碎念）后重新构建都不会把旧文重新顶出来。`hexo new` 新文章自动带上 `updated: false` 和 `sticky: false`；要重推一篇修订过的文章，把 `updated` 改成真实日期（`updated: 2026-09-28 21:00:00`）且距 `date:` 超过 `update_notify_hours` 小时即可——`false`/`null`/空值都表示"从未修订"，一律忽略。stub id 是内容哈希，之后每次修改恰好再通知一次，停止修改 id 立刻稳定。系列章节是普通文章：同样自动带这两个字段、同样支持重推。碎碎念日期支持 `YYYY-MM-DD HH:mm`（也接受 ISO `T` 分隔或仅日期）；日期无法解析的碎碎念会被跳过并在构建时警告。系列 `index.md` 不是文章、不进 feed。文章流上系列卡片的时间取最新一章，所以新章节也会把卡片顶上去。
 
 ### OG 分享图
 
@@ -365,7 +367,7 @@ Butterfly 的 `background` 负责铺页面背景（`#web_bg`）。Panda 在此�
 background: /img/bg.webp        # 也支持数组：每次加载随机选一张
 ```
 
-为什么能对齐：`#web_bg` 本身就是视口大小的盒子，`background-size: cover` + `background-position: center`；导航栏规则用同样的几何参数再加 `background-attachment: fixed`，于是它那 60px 窗口拿到的正是页面背景渲染结果的顶部一条——同一批像素，没有接缝，也不随滚动移动。
+为什么能对齐：`#web_bg` 本身就是视口大小的盒子，`background-size: cover` + `background-position: center`。把同样的 `cover` 直接铺在 60px 的 `#nav` 上，会缩进照片中间一条。滚动后的导航栏改用视口大小的 `#nav::before`（`100vw×100vh`、`cover`、`center`，再裁成 60px），拿到的才是页面背景渲染结果的顶部一条——同一批像素，没有接缝，也不随滚动移动。
 
 可读性：图片带上叠了一层遮罩（`gradient.nav_band_mask_light/dark`），配白色 / `#eaf4ff` 导航文字。以一张中间调照片实测：浅色模式 5.0:1，深色模式 5.2:1。图片特别亮或特别暗时自己调：
 
@@ -384,7 +386,7 @@ gradient:
 
 - `background` 是颜色或原生 CSS 渐变时没有"最上方那条带"可言，导航栏保持原来的渐变样式。
 - 随机数组背景会在运行时把导航栏同步到 `#web_bg` 真正选中的那张图（PJAX 切换同样同步）。
-- iOS Safari 把 `background-attachment: fixed` 当 `scroll` 处理，会把图硬塞进 60px 条里；这类设备上去掉图片、保留遮罩和模糊。
+- iOS Safari 仍然处理不好锁在视口上的 60px 图片带；这类设备上去掉图片层、保留遮罩和模糊。
 
 ### 其他
 
