@@ -135,7 +135,7 @@ aside:
     home: false
   card_author:
     enable: true
-    description: 记录具身智能、机器人导航、ROS2 与多智能体系统的学习和实践。
+    description: 一步一个脚印，记录自己走过来的样子。
     button:
       enable: true
       icon: fab fa-github
@@ -143,7 +143,7 @@ aside:
       link: https://github.com/pppppst
   card_announcement:
     enable: true
-    content: 欢迎来到 pst's Blog。这里记录科研、项目实践、论文阅读与技术学习。
+    content: 欢迎来到 pst's Blog。这里记录生活、阅读。科研实践与技术学习。
   card_recent_post:
     enable: true
     limit: 5
