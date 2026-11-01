@@ -135,7 +135,7 @@ aside:
     home: false
   card_author:
     enable: true
-    description: 一步一个脚印，记录自己走过来的样子。
+    description: 一步一个脚印，记录自己走来的样子。
     button:
       enable: true
       icon: fab fa-github
